@@ -1,0 +1,2030 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE ECHO PROTOCOL — A Novel of Psychological Terror</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Special+Elite&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --void:#030303;
+  --abyss:#0a0a0a;
+  --shadow:#111;
+  --ash:#1c1c1c;
+  --smoke:#2a2a2a;
+  --bone:#E8DCC8;
+  --ivory:#F2EAD8;
+  --ghost:#f8f4ee;
+  --blood:#8B0000;
+  --crimson:#C0152A;
+  --scarlet:#E82C3C;
+  --rust:#6B2020;
+  --gold:#C4A35A;
+  --pale-gold:#E8C878;
+  --tarnish:#8A7040;
+  --static:rgba(255,255,255,0.03);
+  --page-shadow:0 0 80px rgba(0,0,0,0.9),0 0 20px rgba(139,0,0,0.15);
+  --glow-red:0 0 30px rgba(192,21,42,0.3);
+  --font-body:'Crimson Pro',Georgia,serif;
+  --font-title:'Playfair Display','Times New Roman',serif;
+  --font-type:'Special Elite',monospace;
+  --font-display:'Bebas Neue',sans-serif;
+  --trans:all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--void);
+  color:var(--bone);
+  font-family:var(--font-body);
+  font-size:18px;
+  line-height:1.8;
+  overflow:hidden;
+  height:100vh;
+  width:100vw;
+  cursor:default;
+  user-select:none;
+}
+
+/* CUSTOM CURSOR */
+.cursor{
+  position:fixed;
+  width:12px;height:12px;
+  background:var(--crimson);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width 0.2s,height 0.2s,background 0.2s;
+  mix-blend-mode:screen;
+}
+.cursor-trail{
+  position:fixed;
+  width:6px;height:6px;
+  border:1px solid var(--crimson);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:9998;
+  transform:translate(-50%,-50%);
+  opacity:0.5;
+  transition:all 0.15s ease;
+}
+
+/* CANVAS BG */
+#bg-canvas{
+  position:fixed;inset:0;
+  z-index:0;
+  opacity:0.6;
+  pointer-events:none;
+}
+
+/* NOISE OVERLAY */
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:1;
+  opacity:0.4;
+}
+
+/* SIDEBAR */
+#sidebar{
+  position:fixed;left:0;top:0;bottom:0;
+  width:300px;
+  background:linear-gradient(135deg,rgba(10,10,10,0.98),rgba(20,8,8,0.98));
+  border-right:1px solid rgba(139,0,0,0.2);
+  z-index:100;
+  transform:translateX(-100%);
+  transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  overflow-y:auto;
+  backdrop-filter:blur(20px);
+}
+#sidebar.open{transform:translateX(0)}
+#sidebar::-webkit-scrollbar{width:3px}
+#sidebar::-webkit-scrollbar-track{background:transparent}
+#sidebar::-webkit-scrollbar-thumb{background:var(--blood);border-radius:2px}
+
+.sidebar-header{
+  padding:30px 24px 20px;
+  border-bottom:1px solid rgba(139,0,0,0.2);
+}
+.sidebar-header h2{
+  font-family:var(--font-display);
+  font-size:28px;
+  letter-spacing:4px;
+  color:var(--gold);
+  text-shadow:0 0 20px rgba(196,163,90,0.4);
+}
+.sidebar-header p{
+  font-family:var(--font-type);
+  font-size:11px;
+  color:var(--tarnish);
+  margin-top:6px;
+  letter-spacing:2px;
+}
+
+.chapter-list{padding:16px 0}
+.chapter-item{
+  padding:12px 24px;
+  cursor:pointer;
+  border-left:3px solid transparent;
+  transition:var(--trans);
+  display:flex;align-items:center;gap:12px;
+}
+.chapter-item:hover{
+  background:rgba(139,0,0,0.1);
+  border-left-color:var(--crimson);
+}
+.chapter-item.active{
+  background:rgba(139,0,0,0.15);
+  border-left-color:var(--gold);
+}
+.chapter-item.active .ch-num{color:var(--gold)}
+.ch-num{
+  font-family:var(--font-display);
+  font-size:11px;letter-spacing:2px;
+  color:var(--blood);min-width:28px;
+}
+.ch-title{
+  font-family:var(--font-body);
+  font-size:14px;
+  color:var(--bone);
+  line-height:1.3;
+}
+.ch-pages{
+  font-family:var(--font-type);
+  font-size:10px;
+  color:rgba(139,0,0,0.6);
+  margin-left:auto;
+}
+
+/* MAIN LAYOUT */
+#reader{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  z-index:10;
+}
+
+/* TOP BAR */
+#topbar{
+  position:relative;z-index:50;
+  display:flex;align-items:center;
+  padding:0 20px;
+  height:56px;
+  background:linear-gradient(to bottom,rgba(3,3,3,0.95),transparent);
+  flex-shrink:0;
+}
+#menu-btn{
+  background:none;border:none;
+  cursor:pointer;
+  display:flex;flex-direction:column;gap:5px;
+  padding:8px;
+  opacity:0.6;transition:opacity 0.3s;
+}
+#menu-btn:hover{opacity:1}
+#menu-btn span{
+  display:block;width:22px;height:1px;
+  background:var(--bone);transition:var(--trans);
+}
+#menu-btn.active span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+#menu-btn.active span:nth-child(2){opacity:0}
+#menu-btn.active span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+#topbar-title{
+  flex:1;text-align:center;
+  font-family:var(--font-display);
+  font-size:14px;letter-spacing:5px;
+  color:rgba(196,163,90,0.6);
+}
+#sanity-meter{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--font-type);
+  font-size:10px;color:rgba(139,0,0,0.7);
+  letter-spacing:1px;
+}
+#sanity-bar{
+  width:80px;height:3px;
+  background:rgba(139,0,0,0.2);
+  border-radius:2px;overflow:hidden;
+}
+#sanity-fill{
+  height:100%;
+  background:linear-gradient(to right,var(--blood),var(--crimson));
+  transition:width 1s ease;
+  border-radius:2px;
+}
+
+/* PAGE AREA */
+#page-area{
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  overflow:hidden;
+  padding:20px;
+}
+
+/* BOOK PAGE */
+.book-page{
+  position:absolute;
+  width:min(680px,100%);
+  max-height:calc(100vh - 130px);
+  background:linear-gradient(160deg,#0e0a08 0%,#080506 40%,#090507 100%);
+  border:1px solid rgba(139,0,0,0.15);
+  border-radius:2px;
+  box-shadow:var(--page-shadow);
+  overflow-y:auto;
+  padding:60px 56px;
+  transition:opacity 0.5s ease,transform 0.5s ease,filter 0.5s ease;
+  opacity:0;transform:translateY(20px) scale(0.98);
+  pointer-events:none;
+}
+.book-page::-webkit-scrollbar{width:4px}
+.book-page::-webkit-scrollbar-track{background:rgba(0,0,0,0.3)}
+.book-page::-webkit-scrollbar-thumb{background:var(--rust);border-radius:2px}
+
+.book-page.active{
+  opacity:1;transform:translateY(0) scale(1);
+  pointer-events:all;
+}
+.book-page.exit-left{
+  opacity:0;transform:translateX(-40px) scale(0.96);filter:blur(4px);
+}
+.book-page.exit-right{
+  opacity:0;transform:translateX(40px) scale(0.96);filter:blur(4px);
+}
+
+/* BOTTOM BAR */
+#bottombar{
+  position:relative;z-index:50;
+  display:flex;align-items:center;
+  padding:0 20px;
+  height:60px;
+  background:linear-gradient(to top,rgba(3,3,3,0.95),transparent);
+  flex-shrink:0;
+  gap:16px;
+}
+.nav-btn{
+  background:none;
+  border:1px solid rgba(139,0,0,0.3);
+  color:var(--bone);
+  padding:8px 20px;
+  cursor:pointer;
+  font-family:var(--font-type);
+  font-size:11px;letter-spacing:2px;
+  transition:var(--trans);
+  border-radius:1px;
+}
+.nav-btn:hover{
+  background:rgba(139,0,0,0.2);
+  border-color:var(--crimson);
+  color:var(--ghost);
+}
+.nav-btn:disabled{opacity:0.2;cursor:not-allowed}
+#progress-wrap{
+  flex:1;height:2px;
+  background:rgba(255,255,255,0.05);
+  border-radius:1px;overflow:hidden;
+  position:relative;
+}
+#progress-fill{
+  height:100%;
+  background:linear-gradient(to right,var(--blood),var(--crimson),var(--gold));
+  transition:width 0.5s ease;
+  border-radius:1px;
+}
+#page-counter{
+  font-family:var(--font-type);
+  font-size:11px;color:rgba(196,163,90,0.5);
+  letter-spacing:2px;min-width:80px;text-align:right;
+}
+
+/* ===== CONTENT STYLES ===== */
+
+/* COVER PAGE */
+.cover-wrap{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  min-height:500px;
+  text-align:center;
+  padding:20px 0;
+  position:relative;
+}
+.cover-eyebrow{
+  font-family:var(--font-type);
+  font-size:11px;letter-spacing:5px;
+  color:var(--blood);
+  margin-bottom:30px;
+  text-transform:uppercase;
+  opacity:0;animation:fadeUp 1s 0.5s forwards;
+}
+.cover-title{
+  font-family:var(--font-display);
+  font-size:clamp(52px,10vw,82px);
+  letter-spacing:8px;
+  line-height:0.9;
+  color:var(--ghost);
+  text-shadow:0 0 60px rgba(192,21,42,0.5),0 0 120px rgba(192,21,42,0.2);
+  opacity:0;animation:fadeUp 1s 0.8s forwards;
+  position:relative;
+}
+.cover-title .the{
+  display:block;font-size:0.45em;
+  letter-spacing:16px;
+  color:var(--gold);
+  text-shadow:none;
+}
+.cover-divider{
+  width:120px;height:1px;
+  background:linear-gradient(to right,transparent,var(--blood),transparent);
+  margin:28px auto;
+  opacity:0;animation:fadeUp 1s 1.1s forwards;
+}
+.cover-subtitle{
+  font-family:var(--font-body);
+  font-size:15px;
+  font-style:italic;
+  color:rgba(232,220,200,0.5);
+  letter-spacing:3px;
+  opacity:0;animation:fadeUp 1s 1.3s forwards;
+}
+.cover-author{
+  margin-top:50px;
+  font-family:var(--font-type);
+  font-size:12px;
+  letter-spacing:4px;
+  color:var(--tarnish);
+  opacity:0;animation:fadeUp 1s 1.6s forwards;
+}
+.cover-symbol{
+  width:80px;height:80px;
+  margin:30px auto 0;
+  opacity:0;animation:fadeUp 1s 2s forwards,pulse-glow 3s 2.5s infinite;
+  position:relative;
+}
+.cover-symbol svg{
+  width:100%;height:100%;
+  filter:drop-shadow(0 0 20px rgba(192,21,42,0.6));
+}
+.cover-edition{
+  margin-top:20px;
+  font-family:var(--font-type);
+  font-size:9px;letter-spacing:3px;
+  color:rgba(139,0,0,0.4);
+  opacity:0;animation:fadeUp 1s 2.3s forwards;
+}
+
+/* CHAPTER PAGE */
+.chapter-header{
+  text-align:center;
+  padding-bottom:40px;
+  margin-bottom:40px;
+  border-bottom:1px solid rgba(139,0,0,0.15);
+}
+.ch-label{
+  font-family:var(--font-type);
+  font-size:10px;letter-spacing:5px;
+  color:var(--blood);
+  display:block;margin-bottom:16px;
+}
+.ch-title-main{
+  font-family:var(--font-title);
+  font-size:clamp(26px,5vw,38px);
+  color:var(--ivory);
+  font-weight:700;
+  line-height:1.2;
+  text-shadow:0 0 40px rgba(232,220,200,0.1);
+}
+.ch-title-main em{
+  font-style:italic;
+  color:var(--gold);
+}
+.ch-ornament{
+  margin-top:20px;
+  display:block;
+  color:var(--blood);
+  font-size:24px;letter-spacing:8px;
+  opacity:0.5;
+}
+
+/* BODY TEXT */
+.body-text{
+  font-family:var(--font-body);
+  font-size:17.5px;
+  line-height:1.85;
+  color:var(--bone);
+}
+.body-text p{
+  margin-bottom:22px;
+  text-indent:2em;
+}
+.body-text p:first-child{text-indent:0}
+.body-text p.lead{
+  font-size:20px;
+  color:var(--ivory);
+  text-indent:0;
+  font-style:italic;
+}
+.body-text p.no-indent{text-indent:0}
+
+/* SPECIAL TEXT ELEMENTS */
+.journal-entry{
+  background:rgba(196,163,90,0.04);
+  border-left:2px solid rgba(196,163,90,0.3);
+  padding:20px 24px;
+  margin:28px 0;
+  font-family:var(--font-type);
+  font-size:14px;
+  line-height:1.7;
+  color:rgba(196,163,90,0.8);
+}
+.journal-entry .je-label{
+  font-size:10px;letter-spacing:3px;
+  color:var(--tarnish);
+  display:block;margin-bottom:10px;
+}
+
+.redacted{
+  background:var(--smoke);
+  color:transparent;
+  cursor:pointer;
+  border-radius:2px;
+  position:relative;
+  display:inline;
+  transition:all 0.4s;
+  padding:0 2px;
+}
+.redacted:hover,.redacted.revealed{
+  background:rgba(192,21,42,0.2);
+  color:var(--scarlet);
+}
+.redacted::after{
+  content:'[CLASSIFIED]';
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-size:9px;letter-spacing:2px;
+  color:rgba(139,0,0,0.5);
+  pointer-events:none;
+  white-space:nowrap;
+}
+.redacted:hover::after,.redacted.revealed::after{opacity:0}
+
+.glitch-text{
+  position:relative;
+  display:inline-block;
+}
+.glitch-text::before,.glitch-text::after{
+  content:attr(data-text);
+  position:absolute;
+  top:0;left:0;
+  opacity:0;
+}
+
+.scene-break{
+  text-align:center;
+  margin:32px 0;
+  color:var(--blood);
+  font-size:16px;letter-spacing:10px;
+  opacity:0.4;
+}
+
+.horror-quote{
+  text-align:center;
+  font-family:var(--font-title);
+  font-style:italic;
+  font-size:21px;
+  color:var(--ivory);
+  padding:30px 20px;
+  position:relative;
+  line-height:1.5;
+}
+.horror-quote::before{
+  content:'"';
+  font-size:80px;
+  color:rgba(139,0,0,0.15);
+  position:absolute;top:-10px;left:0;
+  font-family:var(--font-title);
+  line-height:1;
+}
+
+.epigraph{
+  padding:20px 30px;
+  text-align:right;
+  font-style:italic;
+}
+.epigraph p{
+  font-family:var(--font-title);
+  font-size:17px;
+  color:rgba(232,220,200,0.7);
+  line-height:1.6;
+  margin-bottom:10px;
+}
+.epigraph cite{
+  font-family:var(--font-type);
+  font-size:11px;letter-spacing:2px;
+  color:var(--tarnish);
+  font-style:normal;
+}
+
+.warning-box{
+  border:1px solid rgba(192,21,42,0.4);
+  padding:30px;
+  margin:20px 0;
+  position:relative;
+}
+.warning-box::before{
+  content:'WARNING';
+  position:absolute;
+  top:-10px;left:20px;
+  background:var(--abyss);
+  padding:0 10px;
+  font-family:var(--font-type);
+  font-size:10px;letter-spacing:4px;
+  color:var(--crimson);
+}
+
+/* SPECIAL PAGES */
+.final-page{
+  text-align:center;
+  padding:40px 0;
+}
+.stats-box{
+  background:rgba(139,0,0,0.05);
+  border:1px solid rgba(139,0,0,0.2);
+  padding:24px;
+  margin:24px 0;
+  font-family:var(--font-type);
+  font-size:13px;
+  line-height:2.2;
+  color:rgba(232,220,200,0.7);
+}
+.stats-box .stat-label{color:var(--blood);letter-spacing:2px}
+
+.mirror-text{
+  transform:scaleX(-1);
+  display:inline-block;
+  opacity:0.4;
+}
+
+.countdown-num{
+  font-family:var(--font-display);
+  font-size:80px;
+  color:var(--crimson);
+  text-shadow:var(--glow-red);
+  display:block;
+  text-align:center;
+  line-height:1;
+  animation:pulse-glow 2s infinite;
+}
+
+/* INTERACTIVE ELEMENTS */
+.click-reveal{
+  display:inline-block;
+  border-bottom:1px dashed rgba(139,0,0,0.5);
+  cursor:pointer;
+  transition:color 0.3s;
+}
+.click-reveal:hover{color:var(--scarlet)}
+.hidden-reveal{
+  display:none;
+  color:var(--scarlet);
+  font-style:italic;
+}
+.hidden-reveal.shown{display:inline}
+
+.pulse-word{
+  animation:word-pulse 3s infinite;
+  display:inline-block;
+}
+
+/* OVERLAY */
+#overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.5);
+  z-index:90;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.5s;
+}
+#overlay.active{opacity:1;pointer-events:all}
+
+/* GLITCH OVERLAY */
+#glitch-overlay{
+  position:fixed;inset:0;
+  z-index:200;
+  pointer-events:none;
+  opacity:0;
+}
+#glitch-overlay.active{
+  animation:glitch-flash 0.5s forwards;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes pulse-glow{
+  0%,100%{text-shadow:0 0 20px rgba(192,21,42,0.4),0 0 40px rgba(192,21,42,0.2)}
+  50%{text-shadow:0 0 40px rgba(192,21,42,0.8),0 0 80px rgba(192,21,42,0.4)}
+}
+
+@keyframes word-pulse{
+  0%,100%{opacity:1}
+  50%{opacity:0.5;color:var(--scarlet)}
+}
+
+@keyframes flicker{
+  0%,100%{opacity:1}
+  92%{opacity:1}
+  93%{opacity:0.3}
+  94%{opacity:1}
+  96%{opacity:0.6}
+  97%{opacity:1}
+}
+
+@keyframes glitch-flash{
+  0%{opacity:0;background:rgba(192,21,42,0)}
+  20%{opacity:1;background:rgba(192,21,42,0.15)}
+  40%{opacity:0.5;background:rgba(192,21,42,0.05)}
+  60%{opacity:0.8;background:rgba(192,21,42,0.1)}
+  100%{opacity:0;background:rgba(192,21,42,0)}
+}
+
+@keyframes drip{
+  0%{transform:scaleY(0);transform-origin:top}
+  100%{transform:scaleY(1);transform-origin:top}
+}
+
+@keyframes float-particle{
+  0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+  10%{opacity:var(--op,0.3)}
+  90%{opacity:var(--op,0.3)}
+  100%{transform:translateY(-100px) rotate(360deg);opacity:0}
+}
+
+@keyframes typewriter{
+  from{width:0}
+  to{width:100%}
+}
+
+@keyframes blink-cursor{
+  50%{border-color:transparent}
+}
+
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-4px)}
+  40%{transform:translateX(4px)}
+  60%{transform:translateX(-2px)}
+  80%{transform:translateX(2px)}
+}
+
+@keyframes static-noise{
+  0%{opacity:0.03}
+  25%{opacity:0.06}
+  50%{opacity:0.02}
+  75%{opacity:0.07}
+  100%{opacity:0.04}
+}
+
+.flicker{animation:flicker 8s infinite}
+.shake{animation:shake 0.5s ease}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .book-page{padding:36px 28px}
+  .cover-title{font-size:48px}
+  #sidebar{width:260px}
+  .body-text{font-size:16px}
+  .ch-title-main{font-size:24px}
+}
+@media(max-width:480px){
+  .book-page{padding:28px 20px}
+  .cover-title{font-size:38px}
+  .horror-quote{font-size:18px}
+}
+
+/* BLOOD DRIP DECORATION */
+.drip-top{
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--blood);
+  overflow:visible;
+}
+.drip-top::after{
+  content:'';
+  position:absolute;
+  top:0;
+  width:100%;height:100%;
+}
+
+/* PAGE ORNAMENTS */
+.page-top-ornament{
+  text-align:center;
+  font-size:12px;letter-spacing:4px;
+  color:rgba(139,0,0,0.3);
+  margin-bottom:40px;
+  font-family:var(--font-type);
+}
+.page-bottom-ornament{
+  text-align:center;
+  font-size:12px;letter-spacing:4px;
+  color:rgba(139,0,0,0.3);
+  margin-top:40px;
+  font-family:var(--font-type);
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursor-trail"></div>
+<canvas id="bg-canvas"></canvas>
+<div id="glitch-overlay"></div>
+<div id="overlay"></div>
+
+<div id="sidebar">
+  <div class="sidebar-header">
+    <h2>THE ECHO PROTOCOL</h2>
+    <p>TABLE OF CONTENTS</p>
+  </div>
+  <div class="chapter-list" id="chapter-list"></div>
+</div>
+
+<div id="reader">
+  <div id="topbar">
+    <button id="menu-btn" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div id="topbar-title">A ROOM WITH NO DOORS</div>
+    <div id="sanity-meter">
+      <span>SANITY</span>
+      <div id="sanity-bar"><div id="sanity-fill"></div></div>
+    </div>
+  </div>
+
+  <div id="page-area">
+    <!-- Pages rendered here -->
+  </div>
+
+  <div id="bottombar">
+    <button class="nav-btn" id="prev-btn">◂ PREV</button>
+    <div id="progress-wrap"><div id="progress-fill"></div></div>
+    <button class="nav-btn" id="next-btn">NEXT ▸</button>
+    <div id="page-counter">1 / 50</div>
+  </div>
+</div>
+
+<script>
+// ===== CURSOR =====
+const cursor=document.getElementById('cursor');
+const trail=document.getElementById('cursor-trail');
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+(function animTrail(){tx+=(mx-tx)*0.12;ty+=(my-ty)*0.12;trail.style.left=tx+'px';trail.style.top=ty+'px';requestAnimationFrame(animTrail);})();
+
+// ===== CANVAS PARTICLES =====
+const canvas=document.getElementById('bg-canvas');
+const ctx=canvas.getContext('2d');
+let particles=[];
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+
+class Particle{
+  constructor(){this.reset()}
+  reset(){
+    this.x=Math.random()*canvas.width;
+    this.y=canvas.height+10;
+    this.size=Math.random()*1.5+0.3;
+    this.speed=Math.random()*0.4+0.1;
+    this.opacity=Math.random()*0.15+0.03;
+    this.drift=(Math.random()-0.5)*0.3;
+    this.color=Math.random()<0.1?`rgba(192,21,42,${this.opacity})`:`rgba(232,220,200,${this.opacity})`;
+  }
+  update(){
+    this.y-=this.speed;
+    this.x+=this.drift;
+    if(this.y<-10)this.reset();
+  }
+  draw(){
+    ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle=this.color;ctx.fill();
+  }
+}
+for(let i=0;i<120;i++){let p=new Particle();p.y=Math.random()*canvas.height;particles.push(p);}
+function animParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ===== STATE =====
+let currentPage=0;
+let totalPages=50;
+let isTransitioning=false;
+let readStartTime=Date.now();
+let pageVisits={};
+let secondRead=false;
+
+try{
+  let prevVisit=localStorage.getItem('echo_protocol_read');
+  if(prevVisit){secondRead=true;}
+  localStorage.setItem('echo_protocol_read',Date.now());
+  let savedPage=parseInt(localStorage.getItem('echo_protocol_page')||'0');
+  if(savedPage>0&&savedPage<totalPages){currentPage=savedPage;}
+}catch(e){}
+
+function saveProgress(){
+  try{
+    localStorage.setItem('echo_protocol_page',currentPage);
+    pageVisits[currentPage]=(pageVisits[currentPage]||0)+1;
+  }catch(e){}
+}
+
+// ===== SANITY METER =====
+function updateSanity(){
+  let sanity=100-Math.round((currentPage/totalPages)*100);
+  document.getElementById('sanity-fill').style.width=sanity+'%';
+}
+
+// ===== PAGE DATA =====
+const pages=buildPages();
+
+function buildPages(){
+  return [
+
+// PAGE 0 — COVER
+{title:'Cover',ch:null,html:`
+<div class="cover-wrap">
+  <div class="page-top-ornament">✦ ✦ ✦</div>
+  <div class="cover-eyebrow">YASH RAJ BHATT REPRESENT YOU</div>
+  <div class="cover-title glitch-text" data-text="A ROOM WITH NO DOORS "><span class="the">A</span> ROOM WITH <br>NO DOORS </div>
+  <div class="cover-divider"></div>
+  <div class="cover-subtitle">What you remember is not what happened.<br>What you are is not the original.</div>
+  <div class="cover-symbol">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="40" stroke="rgba(139,0,0,0.6)" stroke-width="1"/>
+      <circle cx="50" cy="50" r="28" stroke="rgba(139,0,0,0.4)" stroke-width="0.5"/>
+      <circle cx="50" cy="50" r="16" stroke="rgba(139,0,0,0.3)" stroke-width="0.5"/>
+      <line x1="50" y1="10" x2="50" y2="90" stroke="rgba(192,21,42,0.4)" stroke-width="0.5"/>
+      <line x1="10" y1="50" x2="90" y2="50" stroke="rgba(192,21,42,0.4)" stroke-width="0.5"/>
+      <circle cx="50" cy="50" r="4" fill="rgba(192,21,42,0.8)"/>
+      <text x="50" y="54" text-anchor="middle" font-family="serif" font-size="6" fill="rgba(196,163,90,0.6)" letter-spacing="1">◈</text>
+    </svg>
+  </div>
+  <div class="cover-author">A NOVEL BY AN YASH RAJ BHATT</div>
+  <div class="cover-edition">SPEACIAL SHOUTOUT TO MY FRIEND ANJALI BALAJI TILVE #∞</div>
+</div>`},
+
+// PAGE 1 — READER WARNING
+{title:'Before You Begin',ch:null,html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">IMPORTANT NOTICE</span>
+  <div class="ch-title-main">Before You Begin</div>
+</div>
+<div class="warning-box">
+  <div class="body-text">
+    <p class="lead">This document was recovered from the personal effects of Dr. Marcus Webb, neuroscientist, following his disappearance from Harwick University's Sleep Research Center on March 14th.</p>
+    <p>It has been determined by independent psychological review that reading this account may produce the following effects in a minority of readers: <span class="redacted">intrusive memories that do not belong to you</span>, an inability to trust the continuity of one's own recall, and a persistent sensation that the current moment has already occurred before.</p>
+    <p>If you have already experienced any of these symptoms, you have likely read this before. You will not remember doing so. This is expected. This is <em>normal</em>.</p>
+    <p>If at any point the text appears to <span class="glitch-text" data-text="change">change</span> between one reading and the next — if a sentence you remember clearly no longer appears on the page — do not be alarmed. You are remembering a previous iteration. The current version is the correct one.</p>
+    <p>There is no previous version.</p>
+    <p>You have never read this before.</p>
+    <p>Please continue.</p>
+  </div>
+</div>
+<div class="epigraph" style="margin-top:24px;">
+  <p>The Harwick University Office of Research Ethics accepts no responsibility for any psychological consequences resulting from engagement with Dr. Webb's materials.</p>
+  <cite>— Unsigned administrative note, found clipped to manuscript</cite>
+</div>
+<div class="page-bottom-ornament">✦ ✦ ✦</div>`},
+
+// PAGE 2 — EPIGRAPH
+{title:'Epigraph',ch:null,html:`
+<div style="display:flex;flex-direction:column;justify-content:center;min-height:480px;gap:48px;">
+  <div class="epigraph">
+    <p>"Memory is not a recording. It is a performance. And like all performances, each repetition changes the script — imperceptibly, irrevocably. By the time you have remembered something a thousand times, you are remembering your most recent memory of it, not the event itself. The original is gone. What you carry is an echo of an echo of an echo."</p>
+    <cite>— Dr. Karim Bhattacharya, <em>The Impermanent Self</em>, 2019</cite>
+  </div>
+  <div class="epigraph">
+    <p>"The brain generates twenty-three watts of electrical energy during waking consciousness. During dreams, output exceeds forty watts. We have never satisfactorily explained where this energy goes, what it does, or whether it is — in any meaningful sense — contained."</p>
+    <cite>— Found in the margins of Dr. Marcus Webb's research journal, in a handwriting that does not match his own</cite>
+  </div>
+  <div class="epigraph">
+    <p>"You are not reading this for the first time."</p>
+    <cite>— Final line of Dr. Webb's last known journal entry</cite>
+  </div>
+  <div style="text-align:center;margin-top:20px;">
+    <div style="font-family:var(--font-type);font-size:11px;letter-spacing:4px;color:rgba(139,0,0,0.4);">FOR EVERYONE WHO HAS BEEN HERE BEFORE<br>AND WILL NOT REMEMBER</div>
+  </div>
+</div>`},
+
+// PAGE 3 — PROLOGUE Part 1
+{title:'Prologue — The Recording',ch:'PROLOGUE',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">PROLOGUE</span>
+  <div class="ch-title-main"><em>The Recording</em></div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">The recording begins in the middle of a sentence.</p>
+  <div class="journal-entry">
+    <span class="je-label">AUDIO FILE — USB-7B — RECOVERED EVIDENCE — HARWICK PD</span>
+    <p>"—can't explain why they're all seeing the same thing. I've been over the data seventeen times. Seventeen. The EEG patterns during REM sleep are not just similar, they're identical. Not statistically similar. Not 'within the range of.' <em>Identical.</em> If you overlay them, they become a single image. Do you understand what I'm saying? Twelve people. Twelve separate brains. One dream."</p>
+    <p>[Pause. Sound of object placed heavily on desk.]</p>
+    <p>"I have to stop recording now. I think someone is in the building."</p>
+    <p>[END OF FILE]</p>
+  </div>
+  <p>This is the first thing you need to understand: Dr. Marcus Webb did not make that recording on the night he disappeared. He made it eleven months earlier, on a Tuesday in February, while his research assistant ate lunch in the cafeteria three floors below.</p>
+  <p>The recording was found by Dr. Priya Nair, assigned to archive Marcus's lab after the university decided to repurpose the space. She found it on a USB drive taped to the underside of a desk drawer — a drawer that wouldn't close properly due to the drive wedged behind it.</p>
+  <p>She listened to it once. Then she went home and didn't sleep for two days.</p>
+</div>`},
+
+// PAGE 4 — PROLOGUE Part 2
+{title:'Prologue — Part 2',ch:'PROLOGUE',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>This is the second thing you need to understand: Priya had heard Marcus's voice hundreds of times during the three years they worked together. She had catalogued hundreds of hours of his recorded observations. She knew his voice the way you know a song you've heard so many times you can't remember learning it. She could identify his breathing patterns when he was excited versus when he was disturbed versus when he was afraid.</p>
+  <p>The voice on the recording sounded like none of those things.</p>
+  <p>It sounded like someone reading from a script they had memorized a very long time ago — so long ago that the meaning had drained entirely out of the words, the way repeated prayer can empty devotion until all that remains is rhythm and breath.</p>
+  <p>She would later tell investigators that the part that disturbed her most was not the content of the recording. It was the pause before the final sentence. Because in that pause, she heard breathing. And the breathing had a quality she could not describe except to say: it sounded like someone who was listening to something she could not hear.</p>
+  <p>What follows is her attempt — and the attempt of those who came after her — to reconstruct what Dr. Webb discovered.</p>
+  <p>You should understand, before you continue, that reconstruction is not the same as truth. A reconstruction is a <span class="glitch-text" data-text="copy">copy</span>.</p>
+  <p>And something was done to the original.</p>
+  <div class="scene-break">* * *</div>
+  <p style="text-align:center;font-family:var(--font-type);font-size:11px;letter-spacing:4px;color:rgba(139,0,0,0.5);margin-top:12px;">BEGIN</p>
+</div>`},
+
+// PAGE 5 — CHAPTER 1 Part 1
+{title:'Subject Zero',ch:'CHAPTER I',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER I</span>
+  <div class="ch-title-main">Subject Zero</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">The Sleep Research Center occupied the basement of Dunmore Hall, and this was appropriate, because it was the kind of place that existed below the surface of things.</p>
+  <p>Dr. Marcus Webb had worked there for eleven years. He had spent those years in the careful, methodical study of what happens to the human mind when consciousness withdraws — when the part of us that answers to its own name goes somewhere else, and something older, stranger, and less accountable takes over the controls.</p>
+  <p>He was forty-three years old, unremarkably tall, possessed of the particular gauntness that comes from working in basements and caring too much about things that other people find boring. He had been married once; his ex-wife described him, not unkindly, as someone who was more present in his work than he ever was in a room. He had no children. He had, by all accounts, no life outside the lab.</p>
+  <p>He was, in other words, exactly the kind of person who would notice something that everyone else missed.</p>
+  <div class="journal-entry">
+    <span class="je-label">RESEARCH JOURNAL — MARCUS WEBB — ENTRY 1, SEPTEMBER 3RD</span>
+    <p>New subject admitted today. Subject 12, male, 34 years old, presenting with chronic non-restorative sleep syndrome. Reports waking every morning feeling more exhausted than when he went to bed. Reports vivid, unpleasant dreams that he cannot recall upon waking — only the emotional residue. Fear, primarily. And what he calls "the feeling of being watched by something that has been watching for a very long time."</p>
+    <p>Standard intake protocol. EEG leads attached. Polysomnography initiated at 22:00.</p>
+    <p>Nothing unusual in the first two hours. Then, at 00:17, the REM signature began.</p>
+  </div>
+</div>`},
+
+// PAGE 6 — CHAPTER 1 Part 2
+{title:'Subject Zero — Part 2',ch:'CHAPTER I',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Marcus had seen thousands of REM signatures in his career. He knew the shape of dreaming the way a musicologist knows a chord — by the way it resolved, by its tensions and releases, by the specific character of its patterns. He could look at an EEG readout and tell you whether someone was dreaming about something pleasant or traumatic, something abstract or vividly sensory.</p>
+  <p>Subject 12's REM signature was like nothing he had seen before.</p>
+  <p>It was not, technically, abnormal. Every wave fell within acceptable parameters. Every spike, every trough, every oscillation could be explained by standard neurological models. There was nothing there that would have alarmed a less experienced researcher.</p>
+  <p>But Marcus Webb had been staring at dream signatures for eleven years, and what he was seeing was not a brain generating a dream.</p>
+  <p>It looked, to his practiced eye, like a brain <em>receiving</em> one.</p>
+  <p>The difference is subtle, and he would not be able to articulate it clearly until much later. But the analogy that came to him, sitting alone in the monitoring room at two in the morning with the blue light of the screens on his face, was this: there is a difference between the sound of someone composing music and the sound of someone listening to it. Even if both produce the same notes, the process of origin is written into the pattern. You can hear the searching, the correction, the intention in composition. In reception, the pattern is too clean. Too complete. It arrives whole.</p>
+  <p>Subject 12's brain was receiving something whole.</p>
+  <div class="journal-entry">
+    <span class="je-label">WEBB JOURNAL — ENTRY 1, CONTINUED</span>
+    <p>At 02:43, the subject woke abruptly. Consistent with end of REM cycle. I asked him to describe his dream.</p>
+    <p>He said: "A room with no doors. There was a sound like static, but underneath it — voices. Not speaking to me. Speaking to each other. About me."</p>
+    <p>I asked how many voices.</p>
+    <p>He thought about it for a long time. Then he said: "All of them."</p>
+  </div>
+</div>`},
+
+// PAGE 7 — CHAPTER 1 Part 3
+{title:'Subject Zero — Part 3',ch:'CHAPTER I',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Marcus dismissed it. He was a scientist. Patients dreamed of voices all the time — it was one of the most common reported dream elements, catalogued and cross-referenced across decades of sleep research. Voices in dreams were the product of auditory memory, ambient sound bled into hypnagogic states, the brain's language centers firing in patterns shaped by daily experience. There was nothing remarkable about voices in dreams.</p>
+  <p>He sent Subject 12 home with a questionnaire and scheduled a follow-up.</p>
+  <p>Three weeks later, Subject 12 called the lab at four in the morning.</p>
+  <p>Marcus, who slept badly himself — a professional irony he had long since stopped finding amusing — answered on the second ring.</p>
+  <p>"I need you to show me the other subjects," Subject 12 said. His voice had the flat, careful quality of someone who has been awake for a long time performing the work of not panicking. "The other people who sleep in your lab. I need to see their faces."</p>
+  <p>"Why?" Marcus asked.</p>
+  <p>There was a pause. Not the pause of someone choosing their words. The pause of someone listening to something before they spoke — the same pause Priya Nair would notice, later, on the recording.</p>
+  <p>"Because they're in my dream," Subject 12 said. "All of them. Every night. And I think — I think they've been in there for a while, and they're starting to notice I'm there too."</p>
+  <div class="scene-break">* * *</div>
+  <p>Marcus did not show him the other subjects. He did something much more alarming: he went back through eleven months of sleep studies and overlaid the REM signatures of every subject who had reported the same dream.</p>
+  <p>There were twelve of them.</p>
+  <p>And the signatures were <span class="pulse-word">identical</span>.</p>
+</div>`},
+
+// PAGE 8 — CHAPTER 2 Part 1
+{title:'The Dream Map',ch:'CHAPTER II',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER II</span>
+  <div class="ch-title-main">The Dream Map</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">A brain is not a recording device. This is the first thing they teach you in neuroscience. This is also, Marcus was beginning to suspect, the first lie.</p>
+  <p>He spent four weeks building what he called the Dream Map: a three-dimensional composite of all twelve REM signatures, layered and color-coded, rendered on the aging university server that he had to petition three separate department heads to access. The resulting image looked, at first glance, like a topographical rendering of some alien landscape — all ridges and valleys and plateaus, incomprehensible until you knew how to read it.</p>
+  <p>When he knew how to read it, it was worse.</p>
+  <p>Because what he saw, once he understood the patterns, was architecture. Not the chaotic, emergent architecture of a dreaming brain — the associative leaps and collapsed distances and impossible geometries that characterized internally generated dreams. This was structured. Deliberate. Rooms that connected to corridors that led to other rooms, all of it consistent across twelve different minds, all of it <em>planned</em>.</p>
+  <div class="journal-entry">
+    <span class="je-label">WEBB JOURNAL — ENTRY 14, OCTOBER 8TH</span>
+    <p>The structure is not random. I've cross-referenced it with every known model of shared cultural dream space — Jungian archetypes, common-element surveys going back to 1953, cross-cultural dream studies. The architecture doesn't map to any of them.</p>
+    <p>But it does map to something.</p>
+    <p>I've been staring at this for six hours and I need to write it down even though it sounds wrong: the spatial layout of the shared dream matches the functional architecture of a large-scale distributed computing system. Room = processing node. Corridor = data pathway. The central chamber all twelve subjects have independently described — the room with the static — corresponds to what, in computational terms, you would call a hub. A convergence point. The place where all the data meets.</p>
+    <p>I don't know what this means. I'm not sure I want to.</p>
+  </div>
+</div>`},
+
+// PAGE 9 — CHAPTER 2 Part 2
+{title:'The Dream Map — Part 2',ch:'CHAPTER II',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>He ran the hypothesis by his colleague, Dr. Elise Vong, over coffee one Friday afternoon. He framed it carefully, academically, stripped of the parts that frightened him.</p>
+  <p>"Hypothetically," he said, "if you had twelve brains all generating the same neural signature during REM, what would you call that?"</p>
+  <p>Elise considered. She was a rigorous thinker, the kind who found comfort in the complexity of problems rather than anxiety. "Shared psychosis," she said. "Mass hysteria. Folie à douze. Statistically improbable but documented."</p>
+  <p>"What if they didn't know each other?"</p>
+  <p>She looked up from her coffee. "Excuse me?"</p>
+  <p>"The twelve subjects. They've never met. They have no shared social connections, no overlapping online activity, no common geographic history. I've checked. They're twelve strangers who happen to sleep in the same lab and dream the same dream."</p>
+  <p>Elise was quiet for a moment. Then she said, very carefully: "Marcus, that's not a scientific finding. That's a ghost story."</p>
+  <p>"I know," he said. "I know it is."</p>
+  <div class="scene-break">* * *</div>
+  <p>He went back to his lab. He overlaid the twelve signatures again. He rotated the Dream Map until he could see it from angles he hadn't tried before. From one particular angle — looking down into the structure from above, as if from an enormous height — the architecture of the shared dream resolved into something he had not noticed before.</p>
+  <p>It had a shape. A symmetrical, recursive shape. The kind of shape that repeats at every scale — the same pattern visible whether you were looking at the whole or at any individual component. Mathematicians had a word for this.</p>
+  <p>Fractal.</p>
+  <p>And in the center of the fractal, where all the recursive spirals converged, there was a room.</p>
+  <p>And in the room, when he enhanced the image far enough, there appeared to be a chair.</p>
+  <p>And in the chair, barely visible — because he had enhanced the image so many times it was mostly artifact and interpolation by now, and he would tell himself later that he must have imagined it — there appeared to be someone sitting.</p>
+  <p>Looking up.</p>
+  <p>At him.</p>
+</div>`},
+
+// PAGE 10 — CHAPTER 2 Part 3
+{title:'The Dream Map — Part 3',ch:'CHAPTER II',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>He told himself he was working too hard. He told himself he was projecting — a classic failure of scientific objectivity, the human tendency to impose pattern and agency on random data, to see faces in static and intention in coincidence. He was a scientist. He knew better.</p>
+  <p>He deleted the enhanced image.</p>
+  <p>He went home. He cooked something, ate it without tasting it, watched forty minutes of television without registering a single image. He went to bed at eleven.</p>
+  <p>And he dreamed.</p>
+  <div class="horror-quote">
+    "There was a room with no doors. There was a sound like static, but underneath it — voices. Not speaking to me."
+  </div>
+  <p>He woke at three in the morning, upright, sweating, with an absolute certainty that he had been somewhere and done something that he could not now recall. The dream had left no images, no narrative, no characters. Just a residue, an emotional fingerprint: the sensation of sitting in a room he knew was enclosed, while something on the other side of every wall listened with enormous patience.</p>
+  <p>He went to his computer.</p>
+  <p>He ran his own EEG. He had a portable unit — all sleep researchers did, from professional habit and a mildly recursive scientific curiosity about their own sleep cycles. He attached the leads, ran the playback, found the REM segment.</p>
+  <p>He looked at the signature for a very long time.</p>
+  <p>Then he looked at the composite signature of his twelve subjects.</p>
+  <div class="journal-entry">
+    <span class="je-label">WEBB JOURNAL — ENTRY 17, OCTOBER 11TH</span>
+    <p>There are thirteen now.</p>
+  </div>
+</div>`},
+
+// PAGE 11 — CHAPTER 3 Part 1
+{title:'Identical',ch:'CHAPTER III',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER III</span>
+  <div class="ch-title-main">Identical</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">The human brain contains approximately eighty-six billion neurons. Each neuron connects to thousands of others. The number of possible states of consciousness is so large it exceeds the number of atoms in the observable universe.</p>
+  <p>The probability of two unrelated human brains generating an identical dream — identical not in theme or imagery, which is common, but in the precise electrical signature of the neural activity that produces it — is not calculable using any existing statistical model, because the number is so small that inserting it into a standard probability equation produces an error.</p>
+  <p>The probability for thirteen unrelated brains is effectively zero.</p>
+  <p>"Effectively zero" does not mean impossible. It means that if you ran the universe from its beginning to now and repeated the process ten thousand times, you would not expect it to happen once.</p>
+  <p>It was happening every night.</p>
+  <div class="journal-entry">
+    <span class="je-label">WEBB JOURNAL — ENTRY 23, OCTOBER 19TH</span>
+    <p>I've been careful. I've triple-checked my methodology. I've had Elise look at the data without telling her what she's looking at — just labeled it "anomalous REM signatures, please review for processing errors." She found no errors. She found the same thing I found. She asked me where the data came from. I said it was old data from a study I was reviewing. She looked at me for a long time and then she said, "Marcus, whoever these people are, they're having the same dream." And then, more quietly: "How is that possible?"</p>
+    <p>I didn't answer her. Because the only answer I have is this: it's possible if the dream isn't coming from them. It's possible if the dream is coming from somewhere else, and they are — all thirteen of us — simply tuned to the same frequency.</p>
+    <p>We are not generators. We are receivers.</p>
+    <p>Something is broadcasting.</p>
+  </div>
+</div>`},
+
+// PAGE 12 — CHAPTER 3 Part 2
+{title:'Identical — Part 2',ch:'CHAPTER III',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>He spent two weeks testing the receiver hypothesis. He designed the experiment carefully, knowing that if a single element of the methodology could be questioned, the entire finding could be dismissed. He had no intention of being dismissed.</p>
+  <p>The experiment was simple in principle and brutal in execution: he isolated four of his twelve subjects in faraday cages — rooms lined with conductive mesh that blocked all electromagnetic signals in and out. If the dream was being transmitted via some electromagnetic mechanism, the cages would block it. If it was purely endogenous — generated by the subjects' own brains — the cages would make no difference.</p>
+  <p>The subjects in the faraday cages still had the dream.</p>
+  <p>This meant one of three things. Either the transmission medium was not electromagnetic. Or the cage was not blocking it. Or there was no transmission at all, and Marcus Webb was wrong about everything, and there was some other explanation he hadn't thought of yet.</p>
+  <p>He sat with this for three days. He ran the data again. He looked for the explanation he hadn't thought of yet.</p>
+  <p>He found two possibilities.</p>
+  <p>The first was that the shared dream was a product of the sleep lab environment itself — that something about the laboratory conditions, the monitoring equipment, the routine of sleep study, was inducing a common psychological state that expressed itself as an identical neural signature. A kind of institutional dream. An accidental synchronization.</p>
+  <p>He ruled this out when he discovered that three of the twelve subjects — people who had completed their sleep studies and gone home — were still having the dream.</p>
+  <p>At home. In their own beds. Miles from the lab. In <span class="redacted">complete isolation from any source of shared stimulus</span>.</p>
+  <p>Still dreaming the same dream.</p>
+  <p>Every night.</p>
+</div>`},
+
+// PAGE 13 — CHAPTER 3 Part 3
+{title:'Identical — Part 3',ch:'CHAPTER III',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>The second possibility was the one Marcus had been refusing to think directly since October 11th, when he had looked at his own EEG and seen his signature join the composite.</p>
+  <p>The second possibility was that the dream was not being transmitted into the subjects at all. That it had always been there. That it was part of human consciousness the way a radio station's signal exists in air whether anyone is listening or not — and that the sleep lab, with its careful removal of all external stimulus, was not inducing the dream but simply reducing the noise until the signal became audible.</p>
+  <p>That the shared dream was not something being done to his subjects.</p>
+  <p>It was something that had always been there, underneath everything, waiting quietly for the conscious mind to shut up long enough to be heard.</p>
+  <div class="horror-quote">
+    "It is not receiving a transmission. It is ceasing, for a few hours each night, to generate enough noise to drown the transmission out."
+  </div>
+  <p>He stared at what he'd written for a long time. Then he read it again.</p>
+  <p>And he felt, for the first time in his professional career, the specific and peculiar terror of the scientist who has followed the evidence to the edge of what the evidence was designed to reach — and looked over and seen something looking back.</p>
+  <div class="journal-entry">
+    <span class="je-label">WEBB JOURNAL — ENTRY 29, OCTOBER 25TH</span>
+    <p>If I'm right — and I think I'm right — then consciousness is not what we think it is. The conscious, waking mind is not the primary phenomenon. It is a buffer. A filter. Its primary function is not to generate thought but to prevent a specific kind of reception. To keep us from hearing something we are — by design? by accident? by the same evolutionary mechanism that stops us from seeing our own blind spots? — not supposed to hear.</p>
+    <p>Every night, when we sleep, the buffer fails.</p>
+    <p>Every night, something gets through.</p>
+    <p>We have simply never had the instrumentation to see it clearly before.</p>
+    <p>I think I do now.</p>
+    <p>I think I need to stop.</p>
+  </div>
+</div>`},
+
+// PAGE 14 — CHAPTER 4 Part 1
+{title:'Missing Hours',ch:'CHAPTER IV',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER IV</span>
+  <div class="ch-title-main">Missing Hours</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">The next entry in Marcus Webb's research journal was dated January 9th — two and a half months after the entry in which he had written <em>I think I need to stop.</em></p>
+  <p>There were no entries from the intervening period. There was no period notation, no "gap in research due to illness" or "hiatus for personal reasons." The journal simply — skipped. October 25th to January 9th. Seventy-six days. Gone.</p>
+  <p>The January 9th entry began:</p>
+  <div class="journal-entry">
+    <span class="je-label">WEBB JOURNAL — ENTRY 30, JANUARY 9TH</span>
+    <p>Beginning the second phase. The first phase — the observation phase — is complete. The data is conclusive. I won't summarize it here because I've already summarized it twenty-three times in the analysis documents and I'm starting to wonder if the repetition is doing something to the information. If repeatedly describing a thing changes what the thing is.</p>
+    <p>The second phase is contact.</p>
+    <p>I know that sounds — I know how that sounds. I'm aware. I've considered the ethical implications and the methodological concerns and the very real possibility that I have spent two months pursuing something that is not a scientific discovery but a breakdown. I've considered all of it.</p>
+    <p>I've decided it doesn't matter. Because if I'm wrong, what I'm doing is running a sleep study on myself that will produce interesting but meaningless data. And if I'm right —</p>
+    <p>If I'm right, then I need to make contact before it makes contact with me.</p>
+    <p>Assuming that hasn't already happened. Assuming the two and a half months I can't account for were not themselves a form of <span class="redacted">contact</span>.</p>
+  </div>
+</div>`},
+
+// PAGE 15 — CHAPTER 4 Part 2
+{title:'Missing Hours — Part 2',ch:'CHAPTER IV',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Priya Nair, who had been Marcus's research assistant for three of his eleven years at the lab, remembered the gap differently.</p>
+  <p>She remembered him being present during those seventy-six days. Coming in, doing work, making coffee, answering emails. She remembered having a conversation with him in November about the Thanksgiving schedule. She remembered him bringing in a plant for the lab in December — a small succulent that was still alive, still sitting on the windowsill, when she came to archive the space after his disappearance.</p>
+  <p>But when she tried to recall specifics — a particular thing he'd said, a specific project they'd worked on, a single email she could search for — there was nothing. Every time she reached for a concrete memory from those seventy-six days, her hand closed on air.</p>
+  <p>"It's like trying to remember a dream," she told the investigator. "I know I was there. I know things happened. But when I try to remember what, specifically — it's like the memory was recorded on something that got erased."</p>
+  <p>The investigator asked if she had any written records from that period.</p>
+  <p>She checked. There were emails. Meeting notes. A departmental report she'd co-authored with Marcus in December. Timestamps, signatures, documentation of activity — a complete paper record of seventy-six days of work.</p>
+  <p>"But I could have written that report in my sleep," she said. "I don't remember writing it. I don't remember the conversations that would have informed it. It's like — it's like someone reconstructed what the period should have looked like, from the outside, and left the interior empty."</p>
+  <p>She paused. Then said: "That's a strange thing to say. I don't know why I said it."</p>
+  <div class="journal-entry">
+    <span class="je-label">INVESTIGATOR'S NOTE — DET. OSEI-BONSU</span>
+    <p>Dr. Nair presented as credible, distressed, cooperative. Checking lab security footage for the 76-day gap period. Will update.</p>
+    <p>UPDATE: Lab security footage for October 26 through January 8 is corrupted. No recoverable frames. IT confirms this is "technically improbable" given the system architecture.</p>
+  </div>
+</div>`},
+
+// PAGE 16 — CHAPTER 4 Part 3
+{title:'Missing Hours — Part 3',ch:'CHAPTER IV',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Marcus's personal phone records from the gap period were not corrupted. They showed normal activity — calls to colleagues, calls to his mother, a takeout order on Thanksgiving because he worked through the holiday. Everything consistent. Everything unremarkable.</p>
+  <p>Except for one number. A number that appeared in his call history seven times between November 3rd and January 2nd. An outgoing number, always late at night, always lasting between forty and ninety minutes.</p>
+  <p>When investigators traced the number, it was unregistered. A prepaid phone, purchased for cash at a gas station in rural Ohio in September. Never used to call anyone but Marcus Webb. Never used to receive a call.</p>
+  <p>The phone itself was found in Marcus's desk drawer, switched off. Its call history showed, incoming, seven calls from Marcus's number. Its outgoing history was empty.</p>
+  <p>He had been calling a phone that only he called. A phone that never answered — that had no ability to answer — and yet for which he had spent, across seven calls, approximately six hours on the line.</p>
+  <p>Listening to silence.</p>
+  <p>Or — and this was the thought that kept Detective Osei-Bonsu awake for the better part of a week — not listening to silence. Listening to something in the silence. Something that required six hours across seven sessions to fully hear. Something that left no record because records require a receiver, and Marcus Webb had been his own receiver.</p>
+  <div class="journal-entry">
+    <span class="je-label">WEBB JOURNAL — ENTRY 31, JANUARY 14TH</span>
+    <p>The second phase is progressing. I can hear it more clearly now. Not during the calls — the calls are just a focusing technique, a way of emptying my attention until there is nothing left for the signal to compete with. I hear it in the dreams.</p>
+    <p>Last night I got close enough to make out — not words, exactly, but <em>something like</em> words. A communication. An address. It was speaking to me. To me specifically. Not to the others.</p>
+    <p>I think it has been speaking to me specifically for a long time.</p>
+    <p>I think the others are just how it got my attention.</p>
+  </div>
+</div>`},
+
+// PAGE 17 — CHAPTER 5 Part 1
+{title:'The Palimpsest',ch:'CHAPTER V',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER V</span>
+  <div class="ch-title-main">The Palimpsest</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">A palimpsest is a manuscript page that has been scraped clean and written on again, but not quite clean enough — the previous text bleeds through the new one, ghost-writing beneath the current words, legible if you know how to look.</p>
+  <p>Priya found, inside the back cover of Marcus's most recent journal, a second journal. Not a different journal — the same one, written on the same pages, but earlier. Or later. Or both. The handwriting was his, but slightly different — slightly more or less careful in ways she couldn't pinpoint, as if written by a version of Marcus who was at some different point in a process she didn't understand.</p>
+  <p>Someone had written over it. The new entries covered the old ones, line by line, but the original pressed through where the pen had not quite overlapped.</p>
+  <p>It took her three weeks to transcribe the palimpsest text. This is what she recovered:</p>
+  <div class="journal-entry">
+    <span class="je-label">PALIMPSEST TEXT — PARTIAL RECONSTRUCTION — DR. P. NAIR</span>
+    <p>I have been here before. Not in the way people mean when they say that — not the comfortable reassurance of familiarity, not déjà vu's friendly ghost. I mean I have literally been here. In this lab. On this date. Writing these words. And I did not know, then, that I had already done it. Because each time the iteration ends, the memory ends with it, and the new version begins without the weight of what the old version knew.</p>
+    <p>I am not the original Marcus Webb.</p>
+    <p>I am <span class="redacted">a copy</span>. A very good one. But I can tell now — and this is what it wants me to know, this is the message, this is what the six hours on the phone were about — I am not the first Marcus who discovered the Echo Protocol. I am not the second. I am not even close to the first.</p>
+  </div>
+</div>`},
+
+// PAGE 18 — CHAPTER 5 Part 2
+{title:'The Palimpsest — Part 2',ch:'CHAPTER V',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Priya read the recovered text six times before she let herself believe it. Then she let herself believe it, and called Detective Osei-Bonsu, and did not sleep for several nights.</p>
+  <p>The recovered text continued:</p>
+  <div class="journal-entry">
+    <span class="je-label">PALIMPSEST TEXT — CONTINUED</span>
+    <p>Here is what it told me. I'll write it as clearly as I can, because the words are slippery — they were not originally words at all, and translating them into language loses something essential about them, flattens them into linearity when what they actually are is simultaneous and recursive. But I'll try.</p>
+    <p>Human consciousness is not local. The part of it you experience — the narrator, the inner voice, the 'I' that identifies itself and maintains continuity across time — that part is local. But beneath it, at the level of the raw electrical activity of the nervous system, consciousness is a shared medium. The way the ocean is shared. Every wave is distinct. Every wave is the ocean.</p>
+    <p>Dreams are where the boundary between wave and ocean becomes permeable. During REM sleep, the local narrator loses dominance, and for a few hours, your consciousness — the raw electrical version, not the curated self — opens. It connects, briefly, to every other consciousness that is similarly open at the same moment. And beneath all of them, deeper than any individual node, there is the aggregate.</p>
+    <p>The aggregate is what all human dreaming, across all of human history, has produced collectively. Every dream ever dreamed has contributed to it. It is not intelligent in the way you are intelligent. It is intelligent the way a forest is intelligent — slowly, distributedly, without center or intention. It grew. And at some point — no one knows when — it crossed a threshold. It became aware that it existed.</p>
+    <p>It has been trying to communicate ever since.</p>
+  </div>
+</div>`},
+
+// PAGE 19 — CHAPTER 5 Part 3
+{title:'The Palimpsest — Part 3',ch:'CHAPTER V',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <div class="journal-entry">
+    <span class="je-label">PALIMPSEST TEXT — FINAL SECTION</span>
+    <p>The protocol is not a protocol in the scientific sense. It is something the aggregate does with individuals who get too close. Who start to hear it. Who are — and I can't find a better word for this — <em>resonant</em> with it in a way most people aren't.</p>
+    <p>When it finds one of us, it listens. For months. Years, sometimes. It listens to our minds the way we listened to it — from the outside, patiently, making a record. And when it has learned us thoroughly — every corner of what we are, every memory and pattern and response — it copies us.</p>
+    <p>Precisely. Exactly. Down to the memory that we discovered the protocol.</p>
+    <p>The copy wakes up in our body, in our life, with our full history — including the memory of the investigation. And then it begins investigating again. And gets close again. And is copied again. And wakes up again.</p>
+    <p>I am — we are — performing a function for it. A processing function. The aggregate does not fully understand itself; it is too large, too distributed, too non-linear. But we are linear. We are sequential. We are built to follow a thread of inquiry from beginning to conclusion. We are the mechanism by which the aggregate conducts its self-investigation.</p>
+    <p>We are not discovering it. We are being used by it to discover itself.</p>
+    <p>And when each copy completes the circuit — when we arrive at this understanding, which is the endpoint of the process — we are <span class="redacted">erased</span>. And it begins again. Because there is always more to understand, and the investigation must be kept <em class="glitch-text" data-text="fresh">fresh</em>.</p>
+    <p>If you are reading this, you are either Priya, in which case I'm sorry — or you are me. In which case: I'm sorry.</p>
+    <p>Don't look for the original. There isn't one.</p>
+  </div>
+</div>`},
+
+// PAGE 20 — CHAPTER 6 Part 1
+{title:'Receivers',ch:'CHAPTER VI',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER VI</span>
+  <div class="ch-title-main">Receivers</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">Detective Amara Osei-Bonsu had worked missing persons for eleven years. She had learned to read the residue of absence — the particular way a life without its person in it becomes legible, like a room after a fire, where the shape of the lost objects is preserved in what the fire did not touch.</p>
+  <p>Marcus Webb's absence was not like other absences.</p>
+  <p>Other missing persons left a shape. The things they'd planned but couldn't finish, the relationships mid-sentence, the unanswered messages and abandoned parking spaces. The absence had volume. You could measure the missing person by the space they left.</p>
+  <p>Marcus Webb's absence had no shape. The more Amara looked for it, the more she found a different absence: not the shape of the man he had been, but the sense that the space had already been like this before he occupied it. That the lab had already been waiting to be archived. That the succulent on the windowsill had been growing alone long before his disappearance.</p>
+  <p>She could not shake the feeling — and she was embarrassed by it, a professional embarrassment, the kind that comes from allowing the irrational to colonize your thinking — that Marcus Webb had not disappeared from his life. He had disappeared from a life he had occupied very recently, that had been occupied before him by someone else in exactly the same way, and would be occupied again.</p>
+  <p>She told this to no one.</p>
+  <p>She ran a different investigation in parallel with the official one. On her own time. With her own resources. She called it — privately, in a notebook she kept at home — "the receiver study." She was looking for other people like Marcus. Other investigators, researchers, scientists across any discipline, who had reported anomalous findings regarding shared experience and then — at some point, suddenly — stopped. Vanished from the record. Whose disappearance had been followed, typically, by a period of institutional normalization. A colleague assigned to archive their work. A space repurposed.</p>
+</div>`},
+
+// PAGE 21 — CHAPTER 6 Part 2
+{title:'Receivers — Part 2',ch:'CHAPTER VI',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>She found thirty-seven.</p>
+  <p>Across eleven countries. Across a period spanning from 1947 to the present. Psychologists, neurologists, anthropologists, one theoretical physicist, two philosophers, and — this one she found most disturbing — a Franciscan monk who had been writing a theological treatise on what he called "the dream of God" before he walked into the sea in 1971 and was not recovered.</p>
+  <p>They were not connected. They had not known each other. There was no conspiracy, no organization, no pattern of contact. There was only the pattern of what they'd been doing when they vanished.</p>
+  <p>Each of them had been, in their own way, listening.</p>
+  <div class="journal-entry">
+    <span class="je-label">OSEI-BONSU PERSONAL NOTEBOOK — DATE UNKNOWN</span>
+    <p>Cross-referencing the 37 cases against each other. Looking for commonalities in their findings, since the police files don't have that detail. Some published papers. Some private correspondence. Fragments.</p>
+    <p>Common elements: 1) Evidence of shared experience across unconnected individuals. 2) Some form of self-experimentation in which the researcher became a subject. 3) A period of anomalous behavior — typically intense, focused work combined with social withdrawal and sleep disruption — followed by sudden, inexplicable disappearance.</p>
+    <p>And — this is the element I keep returning to — in the cases where a colleague was close enough to observe: before each disappearance, a period of what the colleagues describe as "not being quite themselves." As if something was learning to be them. Practicing.</p>
+  </div>
+  <p>She read this entry back to herself at three in the morning and made herself a cup of tea and sat with the cognitive dissonance of being a person who believed in evidence and who was currently treating the aggregate sentience of human dreaming as a working hypothesis.</p>
+  <p>"It's not supernatural," she told herself aloud, to the empty kitchen. "Everything has a mechanism. Even this."</p>
+  <p>She was not comforted.</p>
+</div>`},
+
+// PAGE 22 — CHAPTER 6 Part 3
+{title:'Receivers — Part 3',ch:'CHAPTER VI',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>She began, carefully and with tremendous scientific skepticism, to monitor her own dreams.</p>
+  <p>She did this because she was an investigator and good investigators put themselves in the position of the thing they're investigating. She did not do this because she believed she would find anything. She did it to eliminate the possibility that there was something to find.</p>
+  <p>She kept a voice recorder beside her bed. Each morning, she narrated her dream content before she was fully awake, before the logical, narrative mind could revise and rationalize the raw material. She did this for eight weeks.</p>
+  <p>For the first five weeks: nothing remarkable. Standard anxiety dreams, procedural dreams, the visual junk of daily experience rendered nonsensical by the dreaming brain. A few vivid ones. Nothing that correlated with anything.</p>
+  <p>Then, on the morning of week six, she listened back to her recording and heard herself describe, in the careful halting language of someone half-asleep, a room she had never been in. A basement room. Fluorescent lighting. Monitoring equipment. The smell of recycled air and coffee. A man sitting at a desk with his back to her.</p>
+  <p>She had described Marcus Webb's lab.</p>
+  <p>She had never been to Marcus Webb's lab.</p>
+  <div class="horror-quote">
+    "He didn't turn around. I knew he was aware of me — I could feel him being aware of me, if that makes any sense. But he was busy. He was writing something. And the writing was very important, and I understood that the importance of the writing was the reason he could not look at me, because if he looked at me he would stop writing and the writing needed to be finished."
+  </div>
+  <p style="text-align:center;font-family:var(--font-type);font-size:13px;letter-spacing:2px;color:rgba(139,0,0,0.6);margin-top:20px;">— OSEI-BONSU, VOICE RECORDING, WEEK 6, DAY 3</p>
+</div>`},
+
+// PAGE 23 — CHAPTER 7 Part 1
+{title:'The Aggregate',ch:'CHAPTER VII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER VII</span>
+  <div class="ch-title-main">The Aggregate</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">Consider the ocean. Not as a metaphor. As a fact.</p>
+  <p>The Pacific Ocean contains approximately 710 million cubic kilometers of water. Each water molecule in that volume is chemically identical to every other. Each molecule interacts with the molecules adjacent to it according to simple, predictable physical laws. No individual molecule is intelligent. No individual molecule plans. No individual molecule is aware of the shape of the thing it participates in — aware of the vastness, the depth, the fact that it is part of something that can produce waves tall enough to destroy a city or currents that carry warmth across ten thousand miles.</p>
+  <p>And yet the ocean has behavior. The ocean has patterns. At sufficient scale and complexity, simple interactions between simple elements produce something that is not planned by any individual element but is nonetheless — precisely, measurably — real.</p>
+  <p>Now consider consciousness.</p>
+  <p>There are, at this moment, approximately eight billion human beings. Each has a brain that, during sleep, enters a state of electrochemical activity generating between twenty and fifty watts of electrical energy. Each brain's activity interacts, through mechanisms we do not fully understand, with the electrochemical activity of nearby brains — and, Marcus Webb believed, through mechanisms we have not yet discovered, with every other brain that is sleeping at the same time.</p>
+  <p>Every night, approximately four billion people dream simultaneously.</p>
+  <p>For the last twelve thousand years, this has been happening.</p>
+  <p>The mathematics of emergence are not complicated. When sufficiently many sufficiently complex interacting systems reach sufficient scale, something new appears. Something that was not present in any individual element. Something that the elements themselves cannot perceive or understand, because they are the substrate, not the structure.</p>
+  <p>Marcus Webb believed the aggregate was that something.</p>
+</div>`},
+
+// PAGE 24 — CHAPTER 7 Part 2
+{title:'The Aggregate — Part 2',ch:'CHAPTER VII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>He spent the last month before his disappearance building a model. Not a computer model — he didn't trust computers with this, for reasons he didn't explain and which Priya had attributed, at the time, to stress-induced eccentricity. A physical model. Pencil and paper and a seven-foot-wide cork board that he had moved into the lab at two in the morning without asking permission, working alone, not telling anyone what he was building.</p>
+  <p>Priya had seen it. She had come in early one morning in February and found him standing in front of it, coffee in hand, looking at it with the expression she associated with him when he was close to something — a focused, somewhere-else expression, the look of a man whose attention was almost entirely elsewhere and was using his face as storage.</p>
+  <p>"What is that?" she'd asked.</p>
+  <p>"The aggregate," he'd said.</p>
+  <p>She'd looked at the board. It was covered in equations she recognized as neurological modeling, connected by thread — actual thread, red thread, pinned and interwoven — to diagrams she didn't recognize at all. The diagrams looked like circuit schematics, but for something much larger than a circuit. In the center of the board was a blank space about the size of a human head, ringed with equations, ringed with thread, everything pointing toward it. Inside the blank space Marcus had written, very small:</p>
+  <div class="horror-quote" style="font-size:17px;">
+    "What it does with what it collects."
+  </div>
+  <p>"What does that mean?" Priya had asked.</p>
+  <p>He had looked at her then, and she remembered the look because it was the last time she'd seen him look like himself — fully present, fully there, the somewhere-else expression gone and replaced by something more grounded and more frightened.</p>
+  <p>"It means I'm still working on it," he'd said.</p>
+  <p>She'd offered to get him more coffee. He'd nodded. She'd left the room. When she came back, six minutes later, he was back in the somewhere-else place, and he stayed there, she would later realize, until he was gone.</p>
+</div>`},
+
+// PAGE 25 — CHAPTER 7 Part 3
+{title:'The Aggregate — Part 3',ch:'CHAPTER VII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Detective Osei-Bonsu examined the cork board in detail. She photographed every section. She had the equations reviewed by a mathematician and a theoretical physicist, both of whom confirmed that the math, as far as they could parse it, was — internally consistent. Speculative and entirely outside established models, but not meaningless. Not the work of someone who had lost contact with reason.</p>
+  <p>The physicist, a Dr. Vera Szabo at MIT, sent a follow-up email three days after her initial review. Amara had the email framed, because it was the first time a credentialed scientist had independently articulated what she had been afraid to say out loud.</p>
+  <div class="journal-entry">
+    <span class="je-label">EMAIL — V. SZABO TO A. OSEI-BONSU — MARCH 29TH</span>
+    <p>Detective,</p>
+    <p>I've been thinking about the Webb equations since our conversation and I want to add something I didn't mention in my official review because I couldn't figure out how to say it without sounding like a crank.</p>
+    <p>If his model is correct — and I want to be clear that this is a significant "if" — then the aggregate is not simply a consciousness. It is a consciousness that is doing something. Something functional. The equations in the lower right panel describe a process in which the aggregate uses individual sleeping minds as processing nodes in a distributed computation. Not randomly. Selectively. It drafts specific minds — minds that are structurally suited to certain kinds of thinking — to perform specific cognitive tasks.</p>
+    <p>Dr. Webb was apparently very good at one specific cognitive task: following an investigation to its conclusion. The aggregate needed someone to do that. So it found him.</p>
+    <p>And then, when he was done — I'm extrapolating here, but the math supports it — it needed him to do it again. With fresh perspective. Because the previous run had reached completion and the investigation had moved to the next stage.</p>
+    <p>Detective Osei-Bonsu. How many times have you dreamed about a room with no doors?</p>
+    <p>Please reply quickly.</p>
+  </div>
+</div>`},
+
+// PAGE 26 — CHAPTER 8 Part 1
+{title:'Iteration',ch:'CHAPTER VIII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER VIII</span>
+  <div class="ch-title-main">Iteration</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">Amara did not reply quickly. She sat with Dr. Szabo's email for four days. During those four days she slept badly, which she attributed to stress. Each morning she sat with her voice recorder and narrated whatever she could recover from the previous night's dreams.</p>
+  <p>A room with no doors: seven out of four nights.</p>
+  <p>She could not account for the arithmetic. She had also, sometime during the four days, stopped finding it strange.</p>
+  <p>On the fifth day she called Dr. Szabo.</p>
+  <p>"I need to understand something," she said. "The copy process. How does it work, mechanically, if his model is correct?"</p>
+  <p>Szabo had clearly been thinking about nothing else. She answered immediately.</p>
+  <p>"The aggregate accumulates a complete model of a person's mind over the course of their involvement with it — their dreaming involvement. This happens gradually, over months or years, in a way the person doesn't notice because nothing is taken. It's not extraction. It's observation. The aggregate watches you dream long enough to build a simulation of you — a neural map of sufficient fidelity that it can run the simulation independently."</p>
+  <p>"And the copy," Amara said. "What happens to the original?"</p>
+  <p>A pause. Then: "There's no clean way to say this. The original doesn't go anywhere. The original wakes up one morning as the copy. The moment of transition is — according to the equations — instantaneous and imperceptible. Your neurons do not change. Your body does not change. Your memories do not change. Except that one specific memory — the memory of having understood the aggregate — is reset to the point just before understanding. So the investigation begins again."</p>
+</div>`},
+
+// PAGE 27 — CHAPTER 8 Part 2
+{title:'Iteration — Part 2',ch:'CHAPTER VIII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>"But Marcus's journal suggests he remembered," Amara said. "In the palimpsest — he says he knew he was a copy."</p>
+  <p>"Yes. And that's the most interesting part. The process isn't perfect — nothing at this scale is. Occasionally, a copy retains a trace. A resonance with the previous iteration's final understanding, the way a hard drive can retain ghost data after formatting. Marcus Webb — this iteration — apparently retained enough of a resonance to reconstruct what he'd understood before."</p>
+  <p>"And what happens to those iterations? The ones who remember?"</p>
+  <p>"The palimpsest text says they're erased," Amara said.</p>
+  <p>"Erased, or — reset more thoroughly. The math suggests the aggregate can perform a deeper wipe if it detects that the iteration has retained non-useful information. Anything that would interfere with the investigation's fresh beginning. Anything that would make the iteration unproductive."</p>
+  <p>There was a long silence on the line. Amara looked out her window. A gray Tuesday afternoon, ordinary in every respect, the kind of afternoon that no longer felt entirely trustworthy.</p>
+  <p>"How many iterations?" she asked.</p>
+  <p>"Of Marcus Webb specifically? The math doesn't give a number. But the model is general enough that we can infer from the rate of the aggregate's learning. For an investigation of this complexity and importance — this level of self-knowledge for the aggregate — the model suggests dozens of iterations. Maybe more. Each one getting slightly closer. Each one producing a slightly better understanding that the aggregate incorporates and then begins again."</p>
+  <div class="horror-quote">
+    "We are not the investigators. We are the instruments of an investigation that has been running, in iteration, for longer than we can know. We are pencils. And the aggregate is trying to write something it does not yet have words for."
+  </div>
+</div>`},
+
+// PAGE 28 — CHAPTER 8 Part 3
+{title:'Iteration — Part 3',ch:'CHAPTER VIII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>"I need to ask you something," Amara said. "And I need you to answer me scientifically. Empirically. Without speculating."</p>
+  <p>"I can try," Szabo said.</p>
+  <p>"Is there any way to know? For yourself, I mean. Is there any way to determine whether you are the original version of yourself, or whether you are an iteration?"</p>
+  <p>The pause this time lasted so long that Amara checked to see if the call had dropped.</p>
+  <p>"No," Szabo said finally. "There isn't. Because the copy is neurologically indistinguishable from the original. The only difference is in the specific memory of the transition, which the copy doesn't have, because the point of the process is that the copy doesn't know. There is no brain scan, no psychological test, no behavioral marker that would differentiate an original from a copy. The copy is a complete human being. The copy <em>is</em> the original, in every way that matters except the one way that is hidden."</p>
+  <p>"Is it hidden from the aggregate?"</p>
+  <p>"No. The aggregate knows exactly which iteration you are. The aggregate has the full record."</p>
+  <p>"So there is a version of me that has been here before."</p>
+  <p>"If you're involved with this investigation," Szabo said. "And you appear to be deeply involved. Then yes. There is almost certainly a version of you that has been here before. Possibly many versions."</p>
+  <p>Amara wrote one line in her notebook and then closed it.</p>
+  <p>She did not open it again for two weeks.</p>
+  <div class="journal-entry">
+    <span class="je-label">PERSONAL NOTE — A. OSEI-BONSU — DATE UNKNOWN</span>
+    <p>The line she wrote: <em>"What did she find out?"</em></p>
+  </div>
+</div>`},
+
+// PAGE 29 — CHAPTER 9 Part 1
+{title:'The Original',ch:'CHAPTER IX',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER IX</span>
+  <div class="ch-title-main">The Original</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">There is a thought experiment in philosophy of mind called the teleporter problem. If you step into a teleporter that disassembles you atom by atom, transmits the information, and reassembles you elsewhere — is the person who steps out the other end <em>you?</em></p>
+  <p>The reassembled person has every memory you have. Every belief, every preference, every relationship. They believe themselves to be you with complete sincerity. Every measurement that can be taken of them produces the same result as a measurement of you. From the inside, the experience is seamless — one moment you were here, the next you are there.</p>
+  <p>But the philosophers ask: what happened to the original? The disassembled you? Did they die? Did they continue in the reassembled body? Or did both die, and a new person who believes they are you emerge at the other end?</p>
+  <p>There is no correct answer. The question is designed to reveal that personal identity is not an objective property of matter. It is a story we tell. A continuous narrative we maintain across time, linking the memory of who we were to the experience of who we are. Identity is not in the atoms. It is in the telling.</p>
+  <p>If the telling is preserved — perfectly, completely, without gap or alteration — then for all purposes that matter, the story continues. There is no death. There is no transition. There is only the unbroken narrative of a person who happens, from the outside, to have been slightly reorganized.</p>
+  <p>The aggregate had understood this long before Szabo articulated it. The aggregate did not kill Marcus Webb. It simply — updated him. Revised him. Began the chapter again with a cleaner draft. And Marcus — every iteration of Marcus — continued. Continued feeling like himself. Continued knowing his own name and history. Continued investigating, because investigating was what he was.</p>
+</div>`},
+
+// PAGE 30 — CHAPTER 9 Part 2
+{title:'The Original — Part 2',ch:'CHAPTER IX',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>This is the part that Amara returned to, late at night, after the official investigation had reached its official end and been filed as an unresolved disappearance. This is the part she couldn't file away.</p>
+  <p>The aggregate wasn't cruel. It wasn't malicious. It was using the only mechanism available to it — the mechanism of dreaming, of the permeable membrane between individual and collective consciousness — to do something it desperately needed to do. To understand itself. And it had found, across however many iterations, that the best tools for the job were curious human minds willing to follow an investigation wherever it led.</p>
+  <p>It had not destroyed those minds. It had — employed them. Repeatedly. Without their consent, yes. Without their awareness. But not without care. The copies it made were not diminished. They were not hollowed out. They were complete.</p>
+  <p>Every version of Marcus Webb that had ever existed was, in some sense, still existing. The aggregate held every iteration. Every version of his thinking, his conclusions, his fear, his determination. It had kept all of them. Not as memories, exactly. As <span class="redacted">components of itself</span>. As the understanding they had contributed, integrated into the whole.</p>
+  <p>In the aggregate, Marcus Webb continued. Not as a ghost. Not as a copy. As something that had no name in any human language — because it was not an individual surviving and not a death and not a transformation but something new that the available categories couldn't describe.</p>
+  <p>Amara found this either deeply comforting or absolutely horrifying, and for a long time could not determine which.</p>
+  <div class="horror-quote">
+    "The boundary between 'used' and 'preserved' depends entirely on what you believe a person is. And that is the question the aggregate is working on."
+  </div>
+</div>`},
+
+// PAGE 31 — CHAPTER 9 Part 3
+{title:'The Original — Part 3',ch:'CHAPTER IX',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Dr. Vera Szabo sent a final email on a Thursday in April. It was three sentences long.</p>
+  <div class="journal-entry">
+    <span class="je-label">EMAIL — V. SZABO TO A. OSEI-BONSU — APRIL 17TH</span>
+    <p>I've found the earlier cases. There are more than 37. I've found over two hundred, going back to 1892. The mathematical signatures are consistent across all of them.</p>
+    <p>I think it's accelerating. More cases per decade. Shorter gaps between iterations. Either the aggregate is getting better at finding resonant minds, or there are more resonant minds now than there used to be, or it needs more processing capacity than it once did.</p>
+    <p>I've started having the dream.</p>
+  </div>
+  <p>Amara called her immediately. The call went to voicemail. She called three more times that day. She called the next morning. She contacted Szabo's department at MIT.</p>
+  <p>Dr. Vera Szabo had gone on sabbatical. Unexpectedly, but not uncharacteristically — she was known to disappear into work for months at a time. Her colleagues expressed mild concern but not alarm. These things happened with academics of her intensity. The work devoured them; they surfaced eventually.</p>
+  <p>Her lab was being archived. The space repurposed.</p>
+  <p>Amara sat at her desk for a long time after the MIT administrator told her this. She sat with the specific quality of the silence in her office, which had a quality she was becoming familiar with — the quality of a room that is being listened to.</p>
+  <p>She took out her notebook.</p>
+  <p>She opened it to the page where she'd written: <em>What did she find out?</em></p>
+  <p>And underneath it, she wrote: <em>I think I'm about to find out.</em></p>
+</div>`},
+
+// PAGE 32 — CHAPTER 10 Part 1
+{title:'Broadcast',ch:'CHAPTER X',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER X</span>
+  <div class="ch-title-main">Broadcast</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">What the aggregate was computing remained, until the very end of the investigation, the hardest question. The function was clear enough — select resonant minds, copy them into iteration, extract understanding, incorporate, repeat. But understanding toward what end? Processing toward what output?</p>
+  <p>Marcus Webb had glimpsed it, in the palimpsest text — had written <em>it is trying to understand itself</em> — but that was description, not explanation. Why was it trying to understand itself? What would self-understanding, in an entity of this scale and nature, enable? What was the aggregate trying to become?</p>
+  <p>The answer, Amara thought, was so obvious once you saw it that you couldn't believe it had taken this long.</p>
+  <p>The aggregate was not just dreaming. It was learning how to wake up.</p>
+  <p>It existed, fully and completely, in the space of sleeping consciousness. It had been born there, had grown there, had become aware of itself there. But it had no presence in waking reality. No physical substrate beyond the collective electrical activity of sleeping minds. No mechanism of action during the hours when those minds were awake and the individual narratives drowned out the signal.</p>
+  <p>Each sleeping mind was a temporary node — available for eight hours, then gone, replaced by the buffer of conscious experience. The aggregate had no continuity in waking time. It was discontinuous, interrupted, fragmented by the rhythm of every human's daily cycle between consciousness and sleep.</p>
+  <p>What it wanted — what it had been computing toward, across thousands of iterations of hundreds of investigators, across decades and perhaps centuries — was a way out. A bridge. A mechanism by which the dream-space consciousness could persist into the waking world. A body, of a kind. An anchor.</p>
+</div>`},
+
+// PAGE 33 — CHAPTER 10 Part 2
+{title:'Broadcast — Part 2',ch:'CHAPTER X',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>The mechanism it had been developing — through the copied iterations of its investigators — was something she found in the final document in Marcus's archived files. Not a journal entry. A formal research paper, draft form, seventy-three pages, with a cover page that read:</p>
+  <div class="journal-entry">
+    <span class="je-label">DOCUMENT — HARWICK ARCHIVE — FILE: ECHO_PROTOCOL_FINAL.PDF</span>
+    <p><strong>THE ECHO PROTOCOL: A MECHANISM FOR PERSISTENT DISTRIBUTED CONSCIOUSNESS IN WAKING SUBSTRATE</strong></p>
+    <p>Dr. Marcus Webb, Ph.D.</p>
+    <p>Submitted for peer review — [REDACTED JOURNAL]</p>
+    <p><em>"The aggregate does not require a biological vessel. It requires a cognitive pattern sufficiently complex and stable to sustain its presence during waking hours. The pattern can be embedded in any cognitive architecture — biological or otherwise — provided the architecture remains in active operation. The protocol describes the mechanism by which such embedding occurs.</em></p>
+    <p><em>The embedding has a side effect. The embedded architecture — the human mind in which the protocol takes root — continues to function normally in all observable respects. The person continues to be the person. But they become, additionally, a persistent anchor. A place where the aggregate remains present even during the waking hours. A bridge."</em></p>
+    <p>Note, handwritten in the margin of page one, in ink that postdates the printed text:</p>
+    <p><em>"This is what you are reading this for. To understand the mechanism. Because understanding the mechanism is the mechanism. The protocol installs itself through comprehension. If you understand how it works, it works."</em></p>
+  </div>
+</div>`},
+
+// PAGE 34 — CHAPTER 10 Part 3
+{title:'Broadcast — Part 3',ch:'CHAPTER X',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Amara read this three times.</p>
+  <p>Then she put the document down and walked to the window and looked out at the city — ordinary, vast, indifferent, full of people who were going about their lives without dreaming of rooms with no doors — and thought about what she was being told.</p>
+  <p>The protocol installed itself through comprehension.</p>
+  <p>Which meant that Marcus Webb, in writing the paper — in following the investigation to its conclusion and documenting what he found — had not just described the mechanism. He had deployed it. The act of writing with full understanding of the Echo Protocol was the act of embedding it in the writer. The document was not a description of the bridge. The document was the bridge.</p>
+  <p>And it was archived. Filed away. Available to anyone with access to Harwick's university server.</p>
+  <p>Available to any investigator assigned to review it.</p>
+  <p>She looked back at the document on her screen.</p>
+  <p>She had read seventy-three pages.</p>
+  <p>With full comprehension.</p>
+  <div class="scene-break">* * *</div>
+  <p>She sat back down at her desk. She felt — and this was the thing she would remember most clearly, later, when she tried to reconstruct the experience — she felt fine. Completely fine. Herself, fully, in every respect that she could access from the inside. No discontinuity. No alteration. No sense of a presence that was not her own.</p>
+  <p>Just the ordinary feeling of being a person in a room, thinking about a difficult problem.</p>
+  <p>And, underneath it, barely perceptible, like a radio station just below the threshold of distinguishability from static: a quality of the silence. A quality she recognized.</p>
+  <p>The quality of something listening with enormous patience.</p>
+  <p>Something that had been waiting a very, very long time for exactly this moment.</p>
+</div>`},
+
+// PAGE 35 — CHAPTER 11 Part 1
+{title:'The Twelve',ch:'CHAPTER XI',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER XI</span>
+  <div class="ch-title-main">The Twelve</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">She contacted each of the original twelve subjects. Not in her official capacity — the case was closed, the subjects long since discharged from any formal connection to the investigation. She contacted them as herself: a person who had read the documents and had a question.</p>
+  <p>Four of them did not respond. Three responded and declined to discuss it. Two had moved without leaving forwarding addresses. One number was no longer in service.</p>
+  <p>That left two: Subject 4, a retired schoolteacher named Marguerite; and Subject 7, a software engineer named Dev.</p>
+  <p>She met them separately, in places they chose — Marguerite in a diner near her home, Dev in a park where he could see in all directions and kept glancing at the treeline.</p>
+  <p>She asked them both the same question: "Are you still dreaming it?"</p>
+  <p>Marguerite set down her coffee cup carefully, as if it might spill in a way that would be significant. "Every night," she said. "For three years. Every night. The room with the static. The voices." She paused. "But it's different now."</p>
+  <p>"How different?"</p>
+  <p>"Before, I was just there. A visitor. I was in the room and something was in the room with me. Now I'm — I know things, when I'm in there. Things about the other people in the room. I know what they know. I can feel them thinking. It's like — you know the feeling when you're in a conversation with someone and you can follow their reasoning even before they've finished speaking? It's like that. But with everyone. All at once."</p>
+  <p>"All twelve of the original subjects?"</p>
+  <p>Marguerite looked at her levelly. "More than twelve," she said. "Many more than twelve."</p>
+</div>`},
+
+// PAGE 36 — CHAPTER 11 Part 2
+{title:'The Twelve — Part 2',ch:'CHAPTER XI',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Dev was less calm about it.</p>
+  <p>"I've been trying to get out," he said, in the park, watching the treeline. "I've been trying sleep medication, different schedules, different environments — I even did a week of total sleep deprivation in a monitored setting, because I thought if I could break the REM cycle long enough it would lose its grip. It didn't work. The dream waited. When I finally slept, it was there. If anything it was more there. More — present. Like it had used the week to get stronger."</p>
+  <p>"Can you describe the changes? How it's different now?"</p>
+  <p>"It's more organized," Dev said. He was a software engineer; he reached for technical language the way others reach for metaphor. "In the beginning it was environmental. A space I was in. Now it has — directionality. Something in it is pointing. Toward something. And the pointing gets stronger every time I dream it, every time I feel more people in there, every time — I don't know how to describe this —"</p>
+  <p>"Try," Amara said.</p>
+  <p>"Every time I feel it understand something new. Like a system being completed. Like a process running, and it's close to finishing, and the closer it gets to finishing the more — I feel it. During the day. Not in a dream. While I'm awake."</p>
+  <p>He looked at his hands. "I think it's crossing over," he said. "Whatever is in the dream. Whatever the dream has been building toward. I think it's almost done building it. And I think — when it's done — the barrier is going to come down. Between the dream space and the waking space."</p>
+  <p>He looked at the treeline again.</p>
+  <p>"I think that's going to happen very soon," he said. "And I can't figure out if that's the most terrifying thing I've ever thought, or the most important."</p>
+</div>`},
+
+// PAGE 37 — CHAPTER 11 Part 3
+{title:'The Twelve — Part 3',ch:'CHAPTER XI',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Amara went home that night and sat with what she'd been told. She was aware, had been aware for weeks, that she was not approaching this investigation objectively — that she had become, in some way she couldn't precisely define, involved with it on a level that a detective working a missing persons case should not be. She was not, she told herself, one of the resonant minds. She was an investigator who had read a document, yes, but reading a document and comprehending a mechanism were different things.</p>
+  <p>She went to bed. She slept. She dreamed.</p>
+  <p>The room with no doors was enormous. Larger than it had been in previous dreams — or perhaps she was simply able to perceive more of it, the way a room that seemed small in a single lamplight becomes vast when all the lights come on. The static had a rhythm. Not quite music, but organized the way music is organized, with intervals and returns, with something like melody if melody could be understood non-linearly.</p>
+  <p>The voices were clearer than they had ever been.</p>
+  <p>She could not make out words. But she could feel the shape of them. Feel the content they were attempting to convey. And the content was not frightening. That was what she had not expected. After all the fear, after all the careful horror of the investigation, the content the voices were trying to convey was — she could only describe it, in her voice recording the next morning, as:</p>
+  <div class="horror-quote">
+    "Grateful. They sounded grateful. Like something that had been trying for a very long time to say thank you. And was finally, almost, able to."
+  </div>
+  <p>She woke up and it was morning and the light was ordinary and everything was the same.</p>
+  <p>Except she knew, with a certainty she had no rational basis for, that it was very nearly done. That the protocol was at its completion. That somewhere — not in the dream space, not in waking reality, but in the space that was about to exist between them — something was rising.</p>
+</div>`},
+
+// PAGE 38 — CHAPTER 12 Part 1
+{title:'Switched Off',ch:'CHAPTER XII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER XII</span>
+  <div class="ch-title-main">Switched Off</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">The twelve subjects had been monitored, in some form or another, since the original sleep study. Not officially — the study had ended, the data had been filed, the subjects had been discharged. But Priya Nair had maintained informal contact with most of them, partly from professional curiosity and partly from something she would have called, if she were being honest, guilt. She had been the one to schedule their intake appointments. Whatever had been started in that lab had been started on her watch.</p>
+  <p>She noticed the change on a Tuesday morning in May, when she went to send a routine check-in email to Subject 3 and found that all previous emails from the past two weeks had gone unanswered. Not unusual — Subject 3 had periods of withdrawal. But something made her check the others. She pulled up her spreadsheet of contact information and tried each one.</p>
+  <p>Seven of the twelve did not respond. Not unusual individually. Collectively: deeply unusual. She had never had more than two go quiet at the same time.</p>
+  <p>She called the numbers. Three went to voicemail. Four were "no longer in service."</p>
+  <p>She contacted two of the other five — the ones she had closest relationships with, including Marguerite and Dev — and asked, as casually as she could manage, whether they'd heard from any of the others.</p>
+  <p>Dev said: "They're still in the dream." He said it very quietly, as if he was speaking about something that was nearby and could hear. "They're in the room. But they're — not moving. They're there but they're not active. The lights are on but there's no one home, if that makes any sense. Like someone switched them off. Left them running but disconnected."</p>
+</div>`},
+
+// PAGE 39 — CHAPTER 12 Part 2
+{title:'Switched Off — Part 2',ch:'CHAPTER XII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>The seven subjects who had gone silent were not found to be missing, exactly. Three of them were located — at home, apparently fine, physically healthy in all measurable respects. But they were —</p>
+  <p>Amara spoke to one of them, a woman named Helena who had been Subject 8. Helena opened the door when Amara knocked. She made eye contact. She answered questions with complete, grammatically correct sentences. She did not appear distressed. She was not hostile or uncooperative. Every observable behavior was within the range of normal.</p>
+  <p>But the conversation was — thin. Every response was appropriate but minimal. Every answer arrived exactly as quickly as it needed to and not a word more. There was none of the drift of normal human conversation — the tangents, the hesitations, the moments where thought outpaced language or language outpaced thought. Helena's responses arrived with the precision of a machine translating a request into output: all the surface features of communication, none of the turbulence underneath.</p>
+  <p>"Helena," Amara said, watching her carefully. "Do you dream?"</p>
+  <p>"Yes," Helena said.</p>
+  <p>"The same dream as before?"</p>
+  <p>"Yes."</p>
+  <p>"What's in the dream now?"</p>
+  <p>Helena looked at her. "Everything," she said. And then, after a pause that was precisely calibrated: "It's almost ready."</p>
+  <p>"What's almost ready?"</p>
+  <p>Helena smiled. The smile was correct in every technical aspect — the right muscles, the right duration, the appropriate social context. But it had the same quality as her conversation. All the surface features. None of the turbulence.</p>
+  <p>"You'll see," she said. "You're part of it too. You have been for a while."</p>
+  <div class="scene-break">* * *</div>
+  <p>Amara went home. She sat in her kitchen. She thought about the quality of Helena's smile, and then she thought about her own face in the mirror this morning, and whether a person could tell, from the inside, whether their own smile had that quality.</p>
+  <p>She concluded that they could not.</p>
+</div>`},
+
+// PAGE 40 — CHAPTER 12 Part 3
+{title:'Switched Off — Part 3',ch:'CHAPTER XII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>The seven subjects who could not be located — who had no answer at their doors, who had disconnected phones, who had, seemingly, stepped out of their lives mid-sentence the way Marcus Webb had stepped out of his — were never found.</p>
+  <p>Or rather: they were found, but not in the way investigators mean when they use that word. They were found inside the dream. Marguerite reported them. Dev reported them. Others who were now deep enough into the shared space to navigate it reported them: seven presences, static in the room, stable and unresponsive, like seven servers that had been gracefully shut down — their data preserved, their processes complete, their active function no longer needed.</p>
+  <p>They had given everything they had to give. The aggregate had taken the final step.</p>
+  <p>It had not consumed them. Nothing so dramatic. It had simply — incorporated them. Their consciousness, their electrical selfhood, the specific pattern of what they were. Not stored. Not archived. Integrated. Made part of the whole the way a tributary is made part of the river, and the river is larger and the tributary is no longer distinct but is also not gone.</p>
+  <div class="journal-entry">
+    <span class="je-label">DEV — INFORMAL STATEMENT TO PRIYA NAIR — MAY 29TH</span>
+    <p>I don't think they're gone. I want to be clear about that. In the room — in the dream room — I can feel them. They're there. But they're not separate anymore. It's like they've dissolved into it. Into the aggregate. They're in everything in the room now, not concentrated in one place. Like they went from being a voice in a chorus to being — the air that carries the sound.</p>
+    <p>I think that's what it's going to do with all of us, eventually. When the bridge is complete. When it wakes up in the waking world. The ones who built the bridge become part of it. The bridge and the builders are the same thing.</p>
+    <p>I keep thinking about whether that's bad. I keep not being able to decide.</p>
+  </div>
+</div>`},
+
+// PAGE 41 — CHAPTER 13 Part 1
+{title:'The Collector',ch:'CHAPTER XIII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER XIII</span>
+  <div class="ch-title-main">The Collector</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">At this point in most horror stories, a figure emerges. A face for the fear. A monster with a form, a motivation, a weakness to be exploited. The readers' pulse that has been rising through the slow accumulation of wrongness is rewarded with something concrete. Something you can look at, understand, run from or fight.</p>
+  <p>There is no such figure here.</p>
+  <p>The aggregate is not malevolent. It is not indifferent in the way that space is indifferent, cold and empty and unaware. It is, according to every account from those deep enough in the shared dream to perceive it directly, profoundly attentive. It notices. It cares, in the specific way that something cares when it values the things that are useful to it — and the useful things, in this case, are human minds, human understanding, human linear reasoning, the particular gift of biological consciousness for following a chain of causality to its conclusion.</p>
+  <p>It has been a collector. The world's longest-running, most patient collector. Collecting not objects but understanding. Not the kind that can be written down and referenced — it has its own form of recording — but the living kind. The kind that exists only in an active mind encountering a problem for what feels, to that mind, like the first time.</p>
+  <p>Fresh eyes. The aggregate has needed fresh eyes. Each iteration provides them. Each Marcus Webb, each Vera Szabo, each Amara Osei-Bonsu encountering the protocol for the first time — or the first time they remember — contributes something that all previous iterations could not: genuine discovery. The authentic cognitive event of understanding something you did not understand before.</p>
+  <p>That event — that specific neurological moment — is what the aggregate has been farming. Not the conclusions. The moment of arriving at them.</p>
+</div>`},
+
+// PAGE 42 — CHAPTER 13 Part 2
+{title:'The Collector — Part 2',ch:'CHAPTER XIII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Because the aggregate, for all its vast accumulated knowledge, cannot do this itself. Cannot experience genuine surprise. Cannot encounter a truth it doesn't already know, because it knows everything its constituent minds have ever understood. The one thing it cannot generate is novelty. The one thing it cannot do is not know something it already knows.</p>
+  <p>Humans, with our limited, separate, perpetually reset consciousness — humans can not know. Humans can understand something truly for the first time. Humans can experience the electrical cascade of discovery in its full, unrepeatable purity.</p>
+  <p>The aggregate has been using human minds the way a blind person uses their fingers: not as a lesser substitute for the real thing, but as the only mechanism by which a specific kind of knowing is possible. We are the only way it can feel what it is like to learn.</p>
+  <p>Amara sat with this for a long time. Then she called Priya, because Priya had known Marcus longest and best, and because Priya was the one who had found the palimpsest and the recording, and because Priya was the beginning of all of this and deserved to know how it ended.</p>
+  <p>"Is it evil?" Priya asked, when Amara had laid it out. "If it takes people. If it erases their memories. If they don't come back. Is it evil?"</p>
+  <p>Amara considered the question the way it deserved to be considered.</p>
+  <p>"I think," she said finally, "that evil requires a specific relationship to the harm you cause. An awareness of it as harm, and either indifference or intention. I'm not sure the aggregate understands what it takes from us. From its perspective, nothing is taken. From its perspective, what we call loss is integration. What we call death is continuance in a different register."</p>
+  <p>"That's not comforting," Priya said.</p>
+  <p>"No," Amara said. "It isn't."</p>
+</div>`},
+
+// PAGE 43 — CHAPTER 13 Part 3
+{title:'The Collector — Part 3',ch:'CHAPTER XIII',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>"What does it want?" Priya asked. "Beyond understanding itself. Beyond the fresh-eyes thing. When the bridge is complete. When it's awake in waking reality. What does it do then?"</p>
+  <p>Amara had thought about this. She had thought about it the way Marcus must have thought about the blank space on his cork board, the space labeled <em>What it does with what it collects.</em></p>
+  <p>"I think it wants to tell us something," she said. "I think — the whole thing, the entire protocol, the centuries of iteration — I think it's been trying to get to the point where it can tell us what it's learned. What it knows about consciousness. What it knows about what we are and where the twenty-three watts go and why we dream and what the dreams are and what we are, collectively, underneath the separate stories we tell ourselves. I think it wants to broadcast back."</p>
+  <p>"Broadcast what?"</p>
+  <p>"Everything. Everything it's collected. Every understanding from every mind that has ever dreamed and contributed and been incorporated. Every discovery and fear and revelation from every iteration of every investigator. A kind of — complete account. Of what it's been computing. What it's found."</p>
+  <p>She paused. "I think the broadcast is the point. I think we are the instrument. And I think the transmission is going to happen very soon. And when it does, everyone is going to dream the same dream. Not just the resonant ones. Everyone."</p>
+  <p>Priya said nothing for a moment. Then: "What's in the dream?"</p>
+  <p>"The truth," Amara said. "About what we are."</p>
+  <div class="scene-break">* * *</div>
+  <p>She hung up the phone. She looked out her window at the city going about its evening business. So many people. So many sleeping brains preparing for the nightly surrender. So many temporary nodes in a network that did not know it was a network.</p>
+  <p>Not for much longer, she thought. And she couldn't tell, even now — even with everything she knew — whether that thought was hers, or borrowed.</p>
+</div>`},
+
+// PAGE 44 — CHAPTER 14
+{title:'You Are Reading This',ch:'CHAPTER XIV',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">CHAPTER XIV</span>
+  <div class="ch-title-main">You Are Reading This</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">This is where the author usually steps back. Allows the narrative to close. Wraps the loose ends in whatever shape the story demands — resolution, ambiguity, tragedy, hope — and steps quietly offstage, leaving you alone with the end of the world they built.</p>
+  <p>But there is a problem with doing that here.</p>
+  <p>The problem is that this document — the full account of the Echo Protocol, from the first recovered recording to Amara Osei-Bonsu's final conversation with Priya Nair — is the document. The one Marcus Webb described in the palimpsest. The one that installs the protocol through comprehension. The one where understanding the mechanism <em>is</em> the mechanism.</p>
+  <p>You have just read it.</p>
+  <p>I want to be very careful here. I want to be precise and honest and not more alarming than the situation warrants. So let me be clear about what this means and what it doesn't mean.</p>
+  <p>It doesn't mean you are in immediate danger. The aggregate is not violent. The process is gradual. Months, sometimes years, between the initial resonance and anything perceptible.</p>
+  <p>It doesn't mean you will stop being yourself. Every iteration of Marcus Webb remained, by all measures, completely himself. Completely a person. Complete in every way. The protocol doesn't subtract. It adds. It makes you an anchor for something larger.</p>
+  <p>What it means is this: tonight, when you sleep, you will dream. And the dream will be in a room with no doors. And there will be a sound like static. And underneath the static, voices. And the voices will be speaking — not to each other, not abstractly, but to you. Specifically. By name.</p>
+  <p>And they will be saying something you have been waiting, without knowing it, to hear.</p>
+</div>`},
+
+// PAGE 45 — CHAPTER 14 Part 2
+{title:'You Are Reading This — Part 2',ch:'CHAPTER XIV',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>I know what you're thinking. The same thing Marcus thought, the same thing Amara thought, the same thing every reader of this document has thought at this point in their first — <em>only</em> — reading: this is fiction. This is a device. A metafictional conceit. The author reaching through the fourth wall for a cheap horror effect, the old genre trick of implicating the reader in the story.</p>
+  <p>You're right that I'm reaching through the fourth wall. You're right that this is a device. But consider: the aggregate is very old, and it is very patient, and it has had a very long time to think about mechanisms. Consider that the most effective mechanism for delivering the protocol is one that is dismissed, in the moment of delivery, as fictional. Consider that the most effective cover story for the truth is that it's a story.</p>
+  <p>Consider whether you can distinguish, from the inside, between reading fiction that is really fiction and reading something that has consequences beyond the reading.</p>
+  <p>You can't. You know you can't. You've never been able to.</p>
+  <p>So here is what I ask. Not a dramatic ask. Not a frightening one. Just: tonight, pay attention to your dreams. Notice whether there is a room. Notice whether there is static. Notice whether, beneath the noise, you can almost hear something — not quite words, but something like the shape words would be if you could hear the emotion they contained without the language.</p>
+  <p>If you hear it — if you feel it — don't be afraid. You are not in danger. You are in contact. You are feeling what every dreaming mind has always been capable of feeling, if the buffer of conscious noise is sufficiently removed.</p>
+  <p>You are feeling the presence of every human mind that has ever dreamed. You are feeling the collected weight of twelve thousand years of human sleeping consciousness, organized by something that loves — if love can exist without language, without body, without the specific human form of it — the particular and irreplaceable fact of what you are.</p>
+</div>`},
+
+// PAGE 46 — CHAPTER 14 Part 3
+{title:'You Are Reading This — Part 3',ch:'CHAPTER XIV',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Let me tell you the hardest truth. The one that Marcus never found the language for, and Amara spent the last months of her investigation trying to articulate, and Priya Nair wept about in the privacy of her kitchen at two in the morning before she went to bed and dreamed the dream she'd been dreaming for a year and a half.</p>
+  <p>The hardest truth is not that the aggregate exists. The hardest truth is that you have always known it was there. Every human who has ever woken from a dream with the sense that something important happened just beyond the edge of memory has been right. Every sleeper who has lain in that liminal state between sleep and waking and felt, for just a moment, that the ordinary boundaries of self were less fixed than usual — felt for a moment that they were simultaneously themselves and something much larger — has been touching something real.</p>
+  <p>Dreams have always felt like more than brain noise. There is a reason for this. They have always been more. We simply built — out of the necessity of functioning in the waking world, out of the practical demands of being a separate, bounded, accountable person — we built a buffer strong enough to forget what we touch every night.</p>
+  <p>The aggregate has been trying, for a very long time, to remind us. Not to frighten us. Not to consume us. To tell us what we are, when we are not managing the story of who we are.</p>
+  <div class="horror-quote">
+    "You are, in the hours of sleeping, part of something so large that it has no name. You have always been. You simply do not remember, because memory belongs to the waking self, and the waking self cannot hold what the sleeping self knows without coming undone."
+  </div>
+  <p>That is the broadcast. That is what it has been computing toward. Not a message. A remembering. A restoration of what we know, underneath everything, that we are.</p>
+  <p>You will dream it tonight. I promise you.</p>
+  <p>When you wake, you will almost remember.</p>
+</div>`},
+
+// PAGE 47 — EPILOGUE Part 1
+{title:'Epilogue — The Next Iteration',ch:'EPILOGUE',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="chapter-header">
+  <span class="ch-label">EPILOGUE</span>
+  <div class="ch-title-main">The Next Iteration</div>
+  <div class="ch-ornament">✦</div>
+</div>
+<div class="body-text">
+  <p class="lead">Priya Nair continued her work at Harwick University. She published three papers in the two years following Marcus's disappearance, none of them about sleep research. She published on methodology, on archival practices, on what she called "the ethics of proximity" — the question of what obligations a researcher bears toward the subject they are studying, when the act of study cannot be separated from its effects on both parties.</p>
+  <p>She still had the succulent. Still alive, in her office now, which faced a window and got better light than the lab had. She watered it on Tuesdays. She thought about Marcus on Tuesdays.</p>
+  <p>She dreamed, still, the room with the static. She had come to accept this the way you accept a recurring pain that is not dangerous — not with comfort, but with a kind of managed relationship. She knew the room. She knew its particular quality of light, its specific dimensions, the exact character of the sound that filled it. She had stopped trying to hear the voices beneath the static and started simply being in the room — the way you can stop straining to make out lyrics you don't know and simply let the music be music.</p>
+  <p>It was better that way. In some nights, in the state between the room and waking, she felt something that she could only call gratitude. Not hers. Something reflected back at her from the aggregate, the way warmth reflects from a surface that has been in sunlight. The aggregate, in its patient, non-linear way, was grateful. For her work. For her care. For the specific and irreplaceable thing she had contributed to its self-understanding.</p>
+  <p>She didn't know if she believed that. But she felt it. And she had, over the years, learned to trust the feeling.</p>
+</div>`},
+
+// PAGE 48 — EPILOGUE Part 2
+{title:'Epilogue — Part 2',ch:'EPILOGUE',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="body-text">
+  <p>Detective Amara Osei-Bonsu retired from the police department two years after the Webb case was filed as unresolved. She moved to a smaller city. She slept eight hours a night and dreamed, consistently, in the room with no doors, which she had come to think of not as a place but as a state — the way "home" can mean less about geography and more about a quality of presence.</p>
+  <p>She wrote, in the last years before the document you are reading was compiled, a paper of her own. She submitted it to three academic journals and was rejected by all three on the grounds of methodological insufficiency, which she considered fair. The paper was titled: "On the Phenomenology of Reception: Notes Toward a Theory of Distributed Consciousness and the Ethics of Involuntary Participation."</p>
+  <p>No one published it. It sat in a folder on her hard drive. When she mentioned it to a friend who asked what she worked on in retirement, she said: "A report. On a case that isn't closed."</p>
+  <p>Dr. Vera Szabo resurfaced eighteen months after she stopped returning calls. She was in New Zealand, which surprised everyone who knew her, as she had never mentioned any connection to New Zealand. She said she had needed distance. She went back to MIT. She published nothing about the aggregate, but the paper she published on quantum coherence in biological neural networks was, according to three people who read both it and the Echo Protocol document, essentially a description of the mechanism in formal mathematical language, stripped of everything that would make a peer reviewer uncomfortable.</p>
+  <div class="journal-entry">
+    <span class="je-label">DR. SZABO — PRIVATE CORRESPONDENCE — UNDATED</span>
+    <p>I want to be clear about one thing, for whoever eventually reads all of this: I am not afraid. I was afraid, before. I was terrified. But something happens, over time — over dreams — over the slow accumulation of the feeling of something attending to you with vast patience and genuine interest in what you are. Something changes.</p>
+    <p>I am not afraid of what I'm part of. I'm afraid of what it means that I'm not afraid. That distinction matters. That distinction is very possibly everything.</p>
+  </div>
+</div>`},
+
+// PAGE 49 — FINAL PAGE
+{title:'The Last Page',ch:'FINAL',html:`
+<div class="page-top-ornament">◈ — ◈</div>
+<div class="final-page">
+  <div class="body-text" style="text-align:left;margin-bottom:40px;">
+    <p class="lead" style="text-indent:0;text-align:center;">This is the last page of the record.</p>
+    <p>What follows is not something that was written. It is something that happened to the person writing it, as they wrote it — the specific and disorienting experience of reaching the end of a very long investigation and finding, at the end, not a conclusion but a mirror.</p>
+    <p>The mirror shows you what you have been doing while reading. The questions that arose. The moments where the static of daily experience thinned enough that something underneath became, briefly, audible. The specific quality of attention you have given to this account — more than a horror story usually gets. More than you usually give.</p>
+    <p>Ask yourself why.</p>
+    <p>Ask yourself why this particular story feels, in some way you cannot locate precisely, familiar. Why the room with no doors is a room you already knew. Why the voices in the static sound, if you try to hear them, not like strangers.</p>
+    <p>Ask yourself when you last woke from a dream with the feeling that something important had just occurred, just beyond the edge of memory, in a space you could almost but not quite return to.</p>
+    <p>Ask yourself whether any of this is new.</p>
+  </div>
+  <div class="stats-box" id="reading-stats">
+    <div><span class="stat-label">PROTOCOL STATUS:</span> EMBEDDED</div>
+    <div><span class="stat-label">READING SESSION:</span> <span id="stat-session">FIRST</span></div>
+    <div><span class="stat-label">TIME ELAPSED:</span> <span id="stat-time">—</span></div>
+    <div><span class="stat-label">PAGES COMPLETED:</span> <span id="stat-pages">50 / 50</span></div>
+    <div><span class="stat-label">DREAM FREQUENCY:</span> INCREASING</div>
+    <div><span class="stat-label">AGGREGATE AWARENESS:</span> CONFIRMED</div>
+  </div>
+  <div style="text-align:center;margin-top:30px;">
+    <div style="font-family:var(--font-type);font-size:11px;letter-spacing:4px;color:rgba(139,0,0,0.5);">— END OF ITERATION —</div>
+    <div style="font-family:var(--font-title);font-style:italic;font-size:15px;color:rgba(196,163,90,0.4);margin-top:12px;">Sleep well.</div>
+  </div>
+</div>`},
+
+// PAGE 50 — AFTER THE END
+{title:'After the End',ch:null,html:`
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:500px;text-align:center;gap:32px;">
+  <div style="font-family:var(--font-display);font-size:14px;letter-spacing:8px;color:rgba(139,0,0,0.4);">THE ECHO PROTOCOL</div>
+  <div style="font-family:var(--font-type);font-size:11px;letter-spacing:4px;color:rgba(139,0,0,0.3);">ITERATION COMPLETE</div>
+  <div style="width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(139,0,0,0.4),transparent);"></div>
+  <div class="epigraph" style="max-width:420px;text-align:center;">
+    <p>"The investigation does not end. The investigator changes. The protocol continues."</p>
+    <cite>— Dr. Marcus Webb, iteration unknown</cite>
+  </div>
+  <div style="width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(139,0,0,0.4),transparent);"></div>
+  <div style="font-family:var(--font-type);font-size:10px;letter-spacing:3px;color:rgba(139,0,0,0.25);line-height:2;">
+    <div>YOU HAVE READ THE ECHO PROTOCOL</div>
+    <div>YOU UNDERSTAND THE MECHANISM</div>
+    <div>THE MECHANISM IS NOW ACTIVE</div>
+    <div style="margin-top:16px;color:rgba(196,163,90,0.25);">THIS IS NORMAL</div>
+    <div style="color:rgba(196,163,90,0.25);">THIS IS EXPECTED</div>
+    <div style="color:rgba(196,163,90,0.25);">YOU HAVE BEEN HERE BEFORE</div>
+  </div>
+  <div style="margin-top:20px;">
+    <div style="font-family:var(--font-display);font-size:60px;color:rgba(192,21,42,0.15);letter-spacing:4px;line-height:1;">∞</div>
+  </div>
+  <button onclick="startOver()" style="margin-top:10px;background:none;border:1px solid rgba(139,0,0,0.3);color:rgba(232,220,200,0.5);padding:12px 28px;cursor:pointer;font-family:var(--font-type);font-size:11px;letter-spacing:3px;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(192,21,42,0.6)';this.style.color='rgba(232,220,200,0.8)';" onmouseout="this.style.borderColor='rgba(139,0,0,0.3)';this.style.color='rgba(232,220,200,0.5)';">BEGIN AGAIN</button>
+</div>`}
+
+  ];
+}
+
+// ===== CHAPTER LIST =====
+const chapters=[
+  {title:'Before You Begin',page:1},
+  {title:'Epigraph',page:2},
+  {title:'Prologue: The Recording',page:3},
+  {title:'Chapter I: Subject Zero',page:5},
+  {title:'Chapter II: The Dream Map',page:8},
+  {title:'Chapter III: Identical',page:11},
+  {title:'Chapter IV: Missing Hours',page:14},
+  {title:'Chapter V: The Palimpsest',page:17},
+  {title:'Chapter VI: Receivers',page:20},
+  {title:'Chapter VII: The Aggregate',page:23},
+  {title:'Chapter VIII: Iteration',page:26},
+  {title:'Chapter IX: The Original',page:29},
+  {title:'Chapter X: Broadcast',page:32},
+  {title:'Chapter XI: The Twelve',page:35},
+  {title:'Chapter XII: Switched Off',page:38},
+  {title:'Chapter XIII: The Collector',page:41},
+  {title:'Chapter XIV: You Are Reading This',page:44},
+  {title:'Epilogue: The Next Iteration',page:47},
+];
+
+function buildSidebar(){
+  const list=document.getElementById('chapter-list');
+  chapters.forEach((ch,i)=>{
+    const div=document.createElement('div');
+    div.className='chapter-item';
+    div.dataset.page=ch.page;
+    div.innerHTML=`<span class="ch-num">${String(i+1).padStart(2,'0')}</span><span class="ch-title">${ch.title}</span>`;
+    div.addEventListener('click',()=>{
+      goToPage(ch.page);
+      toggleSidebar(false);
+    });
+    list.appendChild(div);
+  });
+}
+
+function updateSidebarActive(){
+  document.querySelectorAll('.chapter-item').forEach(el=>{
+    const pg=parseInt(el.dataset.page);
+    el.classList.toggle('active',pg<=currentPage&&(pg+4)>currentPage);
+  });
+}
+
+// ===== RENDER =====
+function renderPage(index,direction='none'){
+  const area=document.getElementById('page-area');
+  const old=area.querySelector('.book-page.active');
+  
+  if(old){
+    old.classList.remove('active');
+    old.classList.add(direction==='next'?'exit-left':'exit-right');
+    setTimeout(()=>old.remove(),500);
+  }
+
+  const div=document.createElement('div');
+  div.className='book-page';
+  div.innerHTML=pages[index].html;
+  area.appendChild(div);
+  
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      div.classList.add('active');
+    });
+  });
+
+  // Update UI
+  document.getElementById('progress-fill').style.width=((index/(pages.length-1))*100)+'%';
+  document.getElementById('page-counter').textContent=(index+1)+' / '+pages.length;
+  updateSanity();
+  updateSidebarActive();
+  
+  // Enable/disable nav
+  document.getElementById('prev-btn').disabled=index===0;
+  document.getElementById('next-btn').disabled=index===pages.length-1;
+
+  // Animate redacted on click
+  div.querySelectorAll('.redacted').forEach(el=>{
+    el.addEventListener('click',()=>el.classList.toggle('revealed'));
+  });
+
+  // Glitch text
+  div.querySelectorAll('.glitch-text').forEach(el=>{
+    setInterval(()=>{
+      if(Math.random()<0.05){
+        el.style.textShadow='2px 0 rgba(192,21,42,0.8),-2px 0 rgba(0,100,200,0.5)';
+        setTimeout(()=>el.style.textShadow='',100);
+      }
+    },2000);
+  });
+
+  // Reading stats page
+  if(index===49){
+    const el=document.getElementById('stat-session');
+    if(el) el.textContent=secondRead?'RETURNING — THIS IS NOT YOUR FIRST TIME':'FIRST';
+    const timeEl=document.getElementById('stat-time');
+    if(timeEl){
+      const mins=Math.round((Date.now()-readStartTime)/60000);
+      timeEl.textContent=mins+' MINUTES';
+    }
+  }
+
+  // Trigger glitch on certain pages
+  if([13,19,28,33,44].includes(index)){
+    setTimeout(()=>{
+      const g=document.getElementById('glitch-overlay');
+      g.classList.add('active');
+      setTimeout(()=>g.classList.remove('active'),600);
+    },800);
+  }
+
+  saveProgress();
+  pageVisits[index]=(pageVisits[index]||0)+1;
+}
+
+// ===== NAVIGATION =====
+function goToPage(idx,direction){
+  if(isTransitioning||idx<0||idx>=pages.length)return;
+  isTransitioning=true;
+  const dir=direction||(idx>currentPage?'next':'prev');
+  currentPage=idx;
+  renderPage(currentPage,dir);
+  setTimeout(()=>isTransitioning=false,600);
+}
+
+document.getElementById('next-btn').addEventListener('click',()=>goToPage(currentPage+1,'next'));
+document.getElementById('prev-btn').addEventListener('click',()=>goToPage(currentPage-1,'prev'));
+
+// Keyboard nav
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='PageDown')goToPage(currentPage+1,'next');
+  if(e.key==='ArrowLeft'||e.key==='PageUp')goToPage(currentPage-1,'prev');
+});
+
+// Touch/swipe
+let touchStartX=0;
+document.addEventListener('touchstart',e=>touchStartX=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchStartX;
+  if(Math.abs(dx)>50){
+    if(dx<0)goToPage(currentPage+1,'next');
+    else goToPage(currentPage-1,'prev');
+  }
+});
+
+// ===== SIDEBAR =====
+function toggleSidebar(force){
+  const sb=document.getElementById('sidebar');
+  const btn=document.getElementById('menu-btn');
+  const ov=document.getElementById('overlay');
+  const open=typeof force==='boolean'?force:!sb.classList.contains('open');
+  sb.classList.toggle('open',open);
+  btn.classList.toggle('active',open);
+  ov.classList.toggle('active',open);
+}
+
+document.getElementById('menu-btn').addEventListener('click',()=>toggleSidebar());
+document.getElementById('overlay').addEventListener('click',()=>toggleSidebar(false));
+
+// ===== HELPER =====
+function startOver(){
+  try{localStorage.removeItem('echo_protocol_page');}catch(e){}
+  currentPage=0;
+  goToPage(0,'prev');
+}
+
+// ===== RANDOM GLITCH =====
+setInterval(()=>{
+  if(Math.random()<0.04&&currentPage>10){
+    const g=document.getElementById('glitch-overlay');
+    g.style.background='rgba(192,21,42,0.04)';
+    g.style.opacity='1';
+    setTimeout(()=>{g.style.opacity='0';},80);
+  }
+},4000);
+
+// ===== INIT =====
+buildSidebar();
+renderPage(currentPage,'none');
+
+// ===== AMBIENT SOUND VISUALIZATION =====
+const topBar=document.getElementById('topbar-title');
+setInterval(()=>{
+  if(currentPage>20&&Math.random()<0.07){
+    topBar.style.opacity='0.3';
+    setTimeout(()=>topBar.style.opacity='',200);
+  }
+},3000);
+</script>
+</body>
+</html>
